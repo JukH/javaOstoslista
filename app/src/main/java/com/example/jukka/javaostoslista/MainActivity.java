@@ -331,7 +331,7 @@ public class MainActivity extends AppCompatActivity {
             builder.setNegativeButton("Valmistusohje", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    
+
                 }
             });
             builder.show();
