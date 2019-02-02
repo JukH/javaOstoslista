@@ -9,9 +9,9 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_linssiKeitto"
+        android:id="@+id/action_reseptiOpetus"
         android:orderInCategory="200"
-        android:title="@string/action_linssiKeitto"
+        android:title="@string/action_reseptiOpetus"
         app:showAsAction="never" />
 
     <item
