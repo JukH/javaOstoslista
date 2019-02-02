@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "32300194624",
+    "firebase_url": "https://ostoslista-59b02.firebaseio.com",
+    "project_id": "ostoslista-59b02",
+    "storage_bucket": "ostoslista-59b02.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:32300194624:android:be3800b9cff5749c",
+        "android_client_info": {
+          "package_name": "com.example.jukka.javaostoslista"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "32300194624-ln5q6b2vusq1pko30jlhmmcfdhe77a7t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZWFRnakeVWQoAoO18qlWNdXUJxxCusKw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

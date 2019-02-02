@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">VegeX</string>
+    <string name="action_add">Lisää ostos</string>
+    <string name="action_clear">Tyhjennä lista</string>
+    <string name="title_activity_resepti_lista">reseptiLista</string>
+    <string name="action_linssiKeitto">Linssikeitto</string>
+    <string name="action_ohje">Ohje</string>
+    <string name="action_tortillaPizzat">Tortillapizzat</string>
+    <string name="action_kasvisKastikeRiisillä">Kasviskastike riisillä</string>
+    <string name="action_perusSetti">Perustarpeet</string>
+    <string name="action_kasvisLasagne">Kasvislasagne</string>
+</resources>
