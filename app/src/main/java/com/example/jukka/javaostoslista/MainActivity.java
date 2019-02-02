@@ -42,34 +42,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
-    int sipMäärä = 1;
-    int valkSipMäärä = 1;
-    int linssitMäärä = 1;
-    int öljyMäärä = 1;
-    int limeMäärä = 1;
-    int pyreeMäärä = 1;
-    int suolaMäärä = 1;
-    int chiliMäärä = 1;
-    int oreMäärä = 1;
-    int soijaMäärä = 1;
-    int jauhoMäärä = 1;
-    int muskottiMäärä = 1;
-    int murskaMäärä = 1;
-    int pippuriMäärä = 1;
-    int levyMäärä = 1;
-    int paViMäärä = 1;
-    int juustoMäärä = 1;
-    int riisiMäärä = 1;
-    int kookosMaitoMäärä = 1;
-    int tortillaMäärä = 1;
-    int pastaKastikeMäärä = 1;
-    int homeMäärä = 1;
-    int mozzarellaMäärä = 1;
-    int wipesMäärä = 1;
-    int riisiKakkuMäärä = 1;
-    int pepsiMäärä = 1;
-    int pestoMäärä = 1;
-    int jogurttiMäärä = 1;
 
     ArrayList<String> shoppingList = null;
     ArrayAdapter<String> adapter = null;
@@ -255,22 +227,60 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
-        if(id == R.id.action_reseptiOpetus){
+        if(id == R.id.action_reseptiOpetus){ //2.2.2019 koitan rakentaa lisäyksen tietokantaan "resepti-polkuun"
 
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Opeta uusi resepti");
-            builder.setPositiveButton("Peruuta", new DialogInterface.OnClickListener() {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Ruoan nimi:");
+            final EditText input = new EditText(this);
+            builder.setView(input);
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    //LISÄÄ TÄHÄN ETTÄ MENEE FIREBASEEN!
+
+                    //KOMMENTIKSI MUUTETTU 18.1.2019 (OFFLINE-LISÄYS LISTALLE)
+
+                    //shoppingList.add(preferredCase(input.getText().toString())); //OFFLINE-LISÄYS
+                    //Collections.sort(shoppingList);
+                    //storeArrayVal(shoppingList, getApplicationContext());
+                    //lv.setAdapter(adapter);
+
+                    //FIREBASETESTAUS/LISÄÄMINEN
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference myRef = database.getReference();
+                    String key = input.getText().toString();
+
+                    myRef.child("reseptit").child(key).setValue(input.getText().toString()); // 2.2.2019 Menee oikeaan osoitteeseen, nyt vielä reseptit omiin lokereoihin.
+                    //myRef.child("ostos").push().setValue(input.getText().toString()); //Määritetään tietokannan juurelle lapsi johon laitetaan dataa
+                    String pushId = myRef.getKey();
+
+                    Intent mene = new Intent(MainActivity.this, reseptiLista.class ); //2.2.2019 avataan toinen luokka jotta saadaan listalle reseptiobjektit
+                    startActivity(mene);
 
 
+                        AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this); //2.2.2019 Tällä saadaan uusi alertti ekan sisään
+                        builder1.setTitle("This is alert title inside");
+                        builder1.setMessage("This is message for Alert dialog inside");
+                        builder1.show();
+
+
+
+
+                    //*****************************
+
+                    // Attach a listener to read the data at our posts reference
+
+
+
+                    //LISÄÄ TÄHÄN ETTÄ MENEE FIREBASEEN!
                 }
             });
-            builder.setNegativeButton("Lisää raaka-aineet", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton("Peruuta", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
+                    dialog.cancel();
                 }
             });
             builder.show();

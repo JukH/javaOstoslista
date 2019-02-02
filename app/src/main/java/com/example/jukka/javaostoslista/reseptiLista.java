@@ -30,7 +30,7 @@ public class reseptiLista extends Activity {
 
 
         reseptit = new ArrayList<>();
-        Collections.addAll(reseptit, "Linssikeitto", "Kasvislasagne", "Soijalasagne", "Soijakastike ja spagetti", "Tortillapizzat");
+        Collections.addAll(reseptit, "Linssikeitto", "Kasvislasagne", "Soijalasagne","Tortillapizzat");
         adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, reseptit); lv = (ListView) findViewById(R.id.listView); lv.setAdapter(adapter);
 
 
