@@ -227,144 +227,21 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
-        if(id == R.id.action_reseptiOpetus){ //2.2.2019 koitan rakentaa lisäyksen tietokantaan "resepti-polkuun"
+        if(id == R.id.action_reseptit){ //2.2.2019 koitan rakentaa lisäyksen tietokantaan "resepti-polkuun"
 
+            Intent mene = new Intent(MainActivity.this, reseptiLista.class ); //2.2.2019 avataan toinen luokka jotta saadaan listalle reseptiobjektit
+            // mene.putExtra("key",ruokaNimi);
+            startActivity(mene);
 
-            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Ruoan nimi:");
-            final EditText input = new EditText(this);
-            builder.setView(input);
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    //LISÄÄ TÄHÄN ETTÄ MENEE FIREBASEEN!
-
-                    //KOMMENTIKSI MUUTETTU 18.1.2019 (OFFLINE-LISÄYS LISTALLE)
-
-                    //shoppingList.add(preferredCase(input.getText().toString())); //OFFLINE-LISÄYS
-                    //Collections.sort(shoppingList);
-                    //storeArrayVal(shoppingList, getApplicationContext());
-                    //lv.setAdapter(adapter);
-
-                    //FIREBASETESTAUS/LISÄÄMINEN
-                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference();
-                    String key = input.getText().toString();
-
-                    myRef.child("reseptit").child(key).setValue(input.getText().toString()); // 2.2.2019 Menee oikeaan osoitteeseen, nyt vielä reseptit omiin lokereoihin.
-                    //myRef.child("ostos").push().setValue(input.getText().toString()); //Määritetään tietokannan juurelle lapsi johon laitetaan dataa
-                    String pushId = myRef.getKey();
-
-                    String ruokaNimi = input.getText().toString(); //Luodaan muuttuja joka viedään reseptilista-activityyn 3.2.2019
-                    Intent mene = new Intent(MainActivity.this, reseptiLista.class ); //2.2.2019 avataan toinen luokka jotta saadaan listalle reseptiobjektit
-                    mene.putExtra("key",ruokaNimi);
-                    startActivity(mene);
-
-
-
-
-
-                    //*****************************
-
-                    // Attach a listener to read the data at our posts reference
-
-
-
-                    //LISÄÄ TÄHÄN ETTÄ MENEE FIREBASEEN!
-                }
-            });
-            builder.setNegativeButton("Peruuta", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                    dialog.cancel();
-                }
-            });
-            builder.show();
-            return true;
         }
 
-        if(id == R.id.action_kasvisLasagne) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Kasvislasagne");
-            builder.setPositiveButton("Lisää listalle", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
 
 
 
-                }
-            });
-            builder.setNegativeButton("Valmistusohje", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            });
-            builder.show();
-            return true;
-        }
-
-        if(id == R.id.action_kasvisKastikeRiisillä) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Kasviskastike riisillä");
-            builder.setPositiveButton("Lisää listalle", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
 
 
 
-                }
-            });
-            builder.setNegativeButton("Valmistusohje", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
 
-                }
-            });
-            builder.show();
-            return true;
-        }
-
-        if(id == R.id.action_tortillaPizzat) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Tortillapizzat");
-            builder.setPositiveButton("Lisää listalle", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            });
-            builder.setNegativeButton("Valmistusohje", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            });
-            builder.show();
-            return true;
-        }
-
-        if(id == R.id.action_perusSetti) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Perussetti");
-            builder.setPositiveButton("Lisää listalle", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-
-
-                }
-            });
-            builder.setNegativeButton("Sisältö", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            });
-            builder.show();
-            return true;
-        }
 
 
         return super.onOptionsItemSelected(item);

@@ -22,10 +22,10 @@
         </activity>
         <activity
             android:name=".reseptiLista"
-            android:label="Opeta resepti"
+            android:label="Reseptit"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".reseptiOpetus"
+            android:name=".reseptinNäyttö"
             android:label="@string/title_activity_resepti_opetus" />
     </application>
 

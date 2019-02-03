@@ -9,39 +9,14 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_reseptiOpetus"
+        android:id="@+id/action_reseptit"
         android:orderInCategory="200"
-        android:title="@string/action_reseptiOpetus"
+        android:title="Reseptit"
         app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_kasvisLasagne"
-        android:orderInCategory="300"
-        android:title="@string/action_kasvisLasagne"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_kasvisKastikeRiisillä"
-        android:orderInCategory="400"
-        android:title="@string/action_kasvisKastikeRiisillä"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_tortillaPizzat"
-        android:orderInCategory="500"
-        android:title="@string/action_tortillaPizzat"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_perusSetti"
-        android:orderInCategory="600"
-        android:title="@string/action_perusSetti"
-        app:showAsAction="never" />
-
 
     <item
         android:id="@+id/action_clear"
-        android:orderInCategory="700"
+        android:orderInCategory="300"
         android:title="@string/action_clear"
         app:showAsAction="never" />
 

@@ -137,6 +137,8 @@ public class reseptiLista extends AppCompatActivity {
 
 
 
+
+
                         //FIREBASETESTAUS/LISÄÄMINEN
                         FirebaseDatabase database = FirebaseDatabase.getInstance();
                         DatabaseReference myRef = database.getReference();
@@ -150,12 +152,80 @@ public class reseptiLista extends AppCompatActivity {
                         //myRef.child("ostos").push().setValue(input.getText().toString()); //Määritetään tietokannan juurelle lapsi johon laitetaan dataa
                         String pushId = myRef.getKey();
 
+                        reseptit.add(input.getText().toString());
+
+                    }
+                });
+                builder.setNegativeButton("Peruuta", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.cancel();
+                    }
+                });
 
 
+                builder.show();
+                return true;
+            }
 
+            if(id == R.id.action_ohje){
+                AlertDialog alertDialog = new AlertDialog.Builder(reseptiLista.this).create();
+                alertDialog.setTitle("Ohje");
+                alertDialog.setMessage("Painamalla +-kuvaketta voit lisätä raaka-aineita jotka kuuluvat reseptiisi. Kun kaikki halutut raaka-aineet on lisätty, paina 'Valmis', jotta resepti tallentuu.");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+            }
+
+            if(id == R.id.action_reseptiOpetus){
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Anna nimi reseptille:");
+                final EditText input = new EditText(this);
+                builder.setView(input);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //LISÄÄ TÄHÄN ETTÄ MENEE FIREBASEEN!
+
+                        //KOMMENTIKSI MUUTETTU 18.1.2019 (OFFLINE-LISÄYS LISTALLE)
+
+                        //shoppingList.add(preferredCase(input.getText().toString())); //OFFLINE-LISÄYS
+                        //Collections.sort(shoppingList);
+                        //storeArrayVal(shoppingList, getApplicationContext());
+                        //lv.setAdapter(adapter);
+
+                        //FIREBASETESTAUS/LISÄÄMINEN
+                        FirebaseDatabase database = FirebaseDatabase.getInstance();
+                        DatabaseReference myRef = database.getReference();
+                        String key = input.getText().toString();
+
+                        myRef.child("reseptit").child(key).setValue(input.getText().toString()); // 2.2.2019 Menee oikeaan osoitteeseen, nyt vielä reseptit omiin lokereoihin.
+                        //myRef.child("ostos").push().setValue(input.getText().toString()); //Määritetään tietokannan juurelle lapsi johon laitetaan dataa
+                        String pushId = myRef.getKey();
 
                         reseptit.add(input.getText().toString());
 
+                        //String ruokaNimi = input.getText().toString(); //Luodaan muuttuja joka viedään reseptilista-activityyn 3.2.2019
+                        Intent mene = new Intent(reseptiLista.this, reseptinNäyttö.class ); //2.2.2019 avataan toinen luokka jotta saadaan listalle reseptiobjektit
+                        //mene.putExtra("key",ruokaNimi);
+                        startActivity(mene);
+
+
+
+
+
+                        //*****************************
+
+                        // Attach a listener to read the data at our posts reference
+
+
+
+                        //LISÄÄ TÄHÄN ETTÄ MENEE FIREBASEEN!
                     }
                 });
                 builder.setNegativeButton("Peruuta", new DialogInterface.OnClickListener() {
