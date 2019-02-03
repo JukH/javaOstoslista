@@ -1,0 +1,54 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.jukka.javaostoslista.MainActivity">
+    <item
+        android:id="@+id/action_ohje"
+        android:orderInCategory="100"
+        android:title="@string/action_ohje"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_reseptiOpetus"
+        android:orderInCategory="200"
+        android:title="@string/action_reseptiOpetus"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_kasvisLasagne"
+        android:orderInCategory="300"
+        android:title="@string/action_kasvisLasagne"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_kasvisKastikeRiisillä"
+        android:orderInCategory="400"
+        android:title="@string/action_kasvisKastikeRiisillä"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_tortillaPizzat"
+        android:orderInCategory="500"
+        android:title="@string/action_tortillaPizzat"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_perusSetti"
+        android:orderInCategory="600"
+        android:title="@string/action_perusSetti"
+        app:showAsAction="never" />
+
+
+    <item
+        android:id="@+id/action_clear"
+        android:orderInCategory="700"
+        android:title="@string/action_clear"
+        app:showAsAction="never" />
+
+
+    <item
+        android:id="@+id/lisääOstos"
+        android:icon="@drawable/baseline_add_circle_outline_white_48dp"
+        android:title="@string/action_add"
+        app:showAsAction="ifRoom" />
+</menu>

@@ -9,9 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".MainActivity"
-            android:label="OstoslistaDemo v1.1"
+            android:label="OstoslistaDemo v1.2"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,7 +22,11 @@
         </activity>
         <activity
             android:name=".reseptiLista"
-            android:label="@string/title_activity_resepti_lista"></activity>
+            android:label="Opeta resepti"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".reseptiOpetus"
+            android:label="@string/title_activity_resepti_opetus" />
     </application>
 
 </manifest>

@@ -255,14 +255,11 @@ public class MainActivity extends AppCompatActivity {
                     //myRef.child("ostos").push().setValue(input.getText().toString()); //Määritetään tietokannan juurelle lapsi johon laitetaan dataa
                     String pushId = myRef.getKey();
 
+                    String ruokaNimi = input.getText().toString(); //Luodaan muuttuja joka viedään reseptilista-activityyn 3.2.2019
                     Intent mene = new Intent(MainActivity.this, reseptiLista.class ); //2.2.2019 avataan toinen luokka jotta saadaan listalle reseptiobjektit
+                    mene.putExtra("key",ruokaNimi);
                     startActivity(mene);
 
-
-                        AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this); //2.2.2019 Tällä saadaan uusi alertti ekan sisään
-                        builder1.setTitle("This is alert title inside");
-                        builder1.setMessage("This is message for Alert dialog inside");
-                        builder1.show();
 
 
 

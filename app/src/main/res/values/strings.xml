@@ -9,4 +9,8 @@
     <string name="action_kasvisKastikeRiisillä">Kasviskastike riisillä</string>
     <string name="action_perusSetti">Perustarpeet</string>
     <string name="action_kasvisLasagne">Kasvislasagne</string>
+    <string name="lisäysruutu">Lisää raaka-aine</string>
+    <string name="reseptiOpetusNappi">Lisää</string>
+    <string name="title_activity_resepti_opetus">resepti_opetus</string>
+
 </resources>
