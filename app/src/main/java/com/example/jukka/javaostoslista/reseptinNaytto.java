@@ -20,10 +20,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class reseptinNäyttö extends AppCompatActivity {
+public class reseptinNaytto extends AppCompatActivity {
 
 
-    ArrayList<String> reseptit = null;
+    ArrayList<String> raaka_aineet = null;
     ArrayAdapter<String> adapter = null;
     ListView lv = null;
 
@@ -38,9 +38,10 @@ public class reseptinNäyttö extends AppCompatActivity {
 
 
 
-        reseptit = new ArrayList<>();
-        Collections.addAll(reseptit); //Lisää kokonaisen setin tarvittaessa.
-        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, reseptit); lv = (ListView) findViewById(R.id.listView); lv.setAdapter(adapter);
+        raaka_aineet = new ArrayList<>();
+        Collections.addAll(raaka_aineet); //Lisää kokonaisen setin tarvittaessa.
+        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, raaka_aineet);
+        lv = (ListView) findViewById(R.id.listView); lv.setAdapter(adapter);
 
 
 
@@ -62,7 +63,7 @@ public class reseptinNäyttö extends AppCompatActivity {
 
                 // LISÄTÄÄN RAAKA-AINEET LISTALLE JOTTA NIITÄ VOI TARKASTELLA/POISTAA 3.2.2019
 
-                reseptit.add(raaka_aine.getText().toString());
+                raaka_aineet.add(raaka_aine.getText().toString());
 
 
                 //FIREBASETESTAUS/LISÄÄMINEN
@@ -70,13 +71,13 @@ public class reseptinNäyttö extends AppCompatActivity {
                 DatabaseReference myRef = database.getReference();
                 String key = raaka_aine.getText().toString();
 
-                Bundle extras = getIntent().getExtras(); //3.2.2019 TUODAAN mainactivitystä ruokalajin nimi
+                //Bundle extras = getIntent().getExtras(); //3.2.2019 TUODAAN mainactivitystä ruokalajin nimi
 
-                String ruokaLaji = extras.getString("key");
+                //String ruokaLaji = extras.getString("key");
                 //The key argument here must match that used in the other activity
 
 
-                myRef.child("reseptit").child(ruokaLaji).setValue(raaka_aine.getText().toString()); //3.2.2019 Annetaan ruokalajille inputin mukaan nimi tietokantaan
+                //myRef.child("reseptit").child(ruokaLaji).setValue(raaka_aine.getText().toString()); //3.2.2019 Annetaan ruokalajille inputin mukaan nimi tietokantaan
                 //myRef.child("ostos").push().setValue(input.getText().toString()); //Määritetään tietokannan juurelle lapsi johon laitetaan dataa
                 String pushId = myRef.getKey();
 
