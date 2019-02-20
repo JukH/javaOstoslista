@@ -28,6 +28,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +38,7 @@ import java.util.Set;
 
 import static com.example.jukka.javaostoslista.MainActivity.getArrayVal;
 
+
 public class reseptiLista extends AppCompatActivity {
 
 
@@ -44,10 +46,14 @@ public class reseptiLista extends AppCompatActivity {
     ArrayAdapter<String> adapter = null;
     ListView lv = null;
     String key;
+    String t = "testituote";
 
 
     FirebaseDatabase database;
     DatabaseReference myRef;
+    DatabaseReference myRefResepti;
+    DatabaseReference myRefReseptinHaku;
+    DatabaseReference myRefOstosLista;
 
 
     @Override
@@ -357,15 +363,68 @@ public class reseptiLista extends AppCompatActivity {
         builder.setNeutralButton("Lisää listalle", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
+                //Jatka tästä 20.2.2019
+                                                                                ////////////////////////////////////////////////////////////////////////////
+                myRefReseptinHaku = database.getInstance().getReference("reseptit/"+selectedItem);
+                myRefResepti = database.getReference();
+                myRefOstosLista = database.getReference("ostos");
+
+
+
+
+
+
+                        myRefReseptinHaku.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                                for(DataSnapshot ds1 : dataSnapshot.getChildren()) {
+
+
+
+
+
+                                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                        String value = ds.getKey();
+
+
+
+                                            myRefResepti.child("ostos").child(value + " (" + selectedItem + ")").setValue(value + " (" + selectedItem + ")");
+
+                                        }
+                                }
+
+
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+
+
+
+
+
+                Toast.makeText(reseptiLista.this, selectedItem + "-ainekset lisätty ostoslistalle", Toast.LENGTH_SHORT).show();
+
+
+
+
             }
         });
         builder.setNegativeButton("Muokkaa", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
                 Intent mene = new Intent(reseptiLista.this, reseptinNaytto.class ); //2.2.2019 avataan toinen luokka jotta saadaan listalle reseptiobjektit
-                mene.putExtra("key",selectedItem);
+                mene.putExtra("key", selectedItem);
                 startActivity(mene);
+
             }
         });
         builder.show();

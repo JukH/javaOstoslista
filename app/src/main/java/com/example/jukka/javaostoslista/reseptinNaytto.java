@@ -12,9 +12,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
@@ -188,7 +191,16 @@ public class reseptinNaytto extends AppCompatActivity {
 
         //   }
         //});
-
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView parent, View view, final int position, long id) {
+                String selectedItem = ((TextView) view).getText().toString();
+                if (selectedItem.trim().equals(raaka_aineet.get(position).trim())) {
+                    removeElement(selectedItem, position);
+                } else {
+                    Toast.makeText(getApplicationContext(),"Can not be removed", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
 
@@ -265,6 +277,38 @@ public class reseptinNaytto extends AppCompatActivity {
         Toast.makeText(this, "Raaka-aine lisätty", Toast.LENGTH_SHORT).show();
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void removeElement(final String selectedItem, final int position){ //pöljä nimi, kokeile voiko vaihtaa.. 19.2.2019
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(selectedItem);
+        builder.setPositiveButton("Poista", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //19.1.2019///////////////////////////////////
+                String listaTeksti =(lv.getItemAtPosition(position).toString());
+                myRef.child(listaTeksti).removeValue();
+                //////////////////////////////////////////////
+                raaka_aineet.remove(position);
+                //18.1.2019//POISTO MYÖS FIREBASESTA/////////////////////////////
+                //myRef.setValue(null); //poistaa kaiken TOIMII!!! JATKA TÄSTÄ!!!!
+
+                /////////////////////////////////////////////////////////////////
+                adapter.notifyDataSetChanged();
+                Collections.sort(raaka_aineet);
+                //storeArrayVal(shoppingList, getApplicationContext());
+                lv.setAdapter(adapter);
+            }
+        });
+
+        builder.setNegativeButton("Peruuta", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.show();
     }
 }
 

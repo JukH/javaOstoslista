@@ -45,7 +45,8 @@ public class MainActivity extends AppCompatActivity {
 
     ArrayList<String> shoppingList = null;
     ArrayAdapter<String> adapter = null;
-    ListView lv = null;
+    ListView lvMain = null;
+    private static MainActivity instance;
 
 
     //18.1.2019
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         //18.1.2019 //////////////////////////////////////////////////////////////////////////
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("ostos");
@@ -69,11 +71,13 @@ public class MainActivity extends AppCompatActivity {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
                 String value = dataSnapshot.getValue(String.class);
+
                 shoppingList.add(value); //Lisää tuplana listalle uudelleen avatteassa appia?
                 adapter.notifyDataSetChanged();
                 Collections.sort(shoppingList);
                 //storeArrayVal(shoppingList, getApplicationContext()); TÄSSÄ VIKA ETTÄ LISÄSI TUPLANA KÄYNNISTETTÄESSÄ.. TUTKI LISÄÄ!
-                lv.setAdapter(adapter);
+                lvMain.setAdapter(adapter);
+
             }
 
             @Override
@@ -89,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
                 Collections.sort(shoppingList);
                 //storeArrayVal(shoppingList, getApplicationContext());
-                lv.setAdapter(adapter);
+                lvMain.setAdapter(adapter);
                 ////////////////////////////////////////////////////////////////////
             }
 
@@ -109,10 +113,10 @@ public class MainActivity extends AppCompatActivity {
         shoppingList = getArrayVal(getApplicationContext());
         Collections.sort(shoppingList);
         adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, shoppingList);
-        lv = (ListView) findViewById(R.id.listView);
-        lv.setAdapter(adapter);
+        lvMain = (ListView) findViewById(R.id.listView);
+        lvMain.setAdapter(adapter);
 
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lvMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView parent, View view, final int position, long id) {
                 String selectedItem = ((TextView) view).getText().toString();
                 if (selectedItem.trim().equals(shoppingList.get(position).trim())) {
@@ -122,6 +126,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+
     }
 
     @Override
@@ -281,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
 
                 //19.1.2019///////////////////////////////////
-                String listaTeksti =(lv.getItemAtPosition(position).toString());
+                String listaTeksti =(lvMain.getItemAtPosition(position).toString());
                 myRef.child(listaTeksti).removeValue();
                 //////////////////////////////////////////////
                 shoppingList.remove(position);
@@ -292,7 +298,7 @@ public class MainActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
                 Collections.sort(shoppingList);
                 //storeArrayVal(shoppingList, getApplicationContext());
-                lv.setAdapter(adapter);
+                lvMain.setAdapter(adapter);
 
 
 
@@ -307,4 +313,7 @@ public class MainActivity extends AppCompatActivity {
         });
         builder.show();
     }
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 }
