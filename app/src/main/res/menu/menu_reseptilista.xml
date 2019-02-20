@@ -14,9 +14,5 @@
         android:title="Lisää uusi"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/lisääOstos"
-        android:icon="@drawable/baseline_add_circle_outline_white_48dp"
-        android:title="@string/action_add"
-        app:showAsAction="never" />
+
 </menu>

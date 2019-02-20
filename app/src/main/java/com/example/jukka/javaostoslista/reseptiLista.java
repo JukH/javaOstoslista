@@ -43,6 +43,7 @@ public class reseptiLista extends AppCompatActivity {
     ArrayList<String> reseptit = null;
     ArrayAdapter<String> adapter = null;
     ListView lv = null;
+    String key;
 
 
     FirebaseDatabase database;
@@ -71,12 +72,17 @@ public class reseptiLista extends AppCompatActivity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                String value = dataSnapshot.getValue(String.class);
-                reseptit.add(value); //Lisää tuplana listalle uudelleen avatteassa appia?
-                adapter.notifyDataSetChanged();
-                Collections.sort(reseptit);
-                //storeArrayVal(shoppingList, getApplicationContext()); TÄSSÄ VIKA ETTÄ LISÄSI TUPLANA KÄYNNISTETTÄESSÄ.. TUTKI LISÄÄ!
-                lv.setAdapter(adapter);
+                try {
+                    //String value = dataSnapshot.getValue(String.class);
+                    String testi = dataSnapshot.getKey().toString();
+                    reseptit.add(testi); //Lisää tuplana listalle uudelleen avatteassa appia?
+                    adapter.notifyDataSetChanged();
+                    Collections.sort(reseptit);
+                    //storeArrayVal(shoppingList, getApplicationContext()); TÄSSÄ VIKA ETTÄ LISÄSI TUPLANA KÄYNNISTETTÄESSÄ.. TUTKI LISÄÄ!
+                    lv.setAdapter(adapter);
+                } catch (Exception e){
+                    Toast.makeText(reseptiLista.this, "Virhe", Toast.LENGTH_LONG).show();
+                }
             }
 
             @Override
@@ -87,8 +93,9 @@ public class reseptiLista extends AppCompatActivity {
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
                 //18.1.2019/////////////////////////////////////////////////////////
-                String value = dataSnapshot.getValue(String.class);
-                reseptit.remove(value);
+                //String value = dataSnapshot.getValue(String.class);
+                String testi = dataSnapshot.getKey().toString();
+                reseptit.remove(testi);
                 adapter.notifyDataSetChanged();
                 Collections.sort(reseptit);
                 //storeArrayVal(shoppingList, getApplicationContext());
@@ -108,7 +115,7 @@ public class reseptiLista extends AppCompatActivity {
         });
 
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+       /* AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Lisää raaka-aine");
         final EditText raaka_aine = new EditText(this);
         builder.setView(raaka_aine);
@@ -161,7 +168,7 @@ public class reseptiLista extends AppCompatActivity {
 
                 dialog.cancel();
             }
-        });
+        });*/
         reseptit = getArrayVal(getApplicationContext());
         Collections.sort(reseptit);
         adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, reseptit);
@@ -196,7 +203,7 @@ public class reseptiLista extends AppCompatActivity {
 
         int id = item.getItemId();
 
-        if(id == R.id.lisääOstos) {
+        /*if(id == R.id.lisääOstos) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Lisää raaka-aine");
             final EditText input = new EditText(this);
@@ -237,12 +244,12 @@ public class reseptiLista extends AppCompatActivity {
 
             builder.show();
             return true;
-        }
+        } */
 
         if(id == R.id.action_ohje){
             AlertDialog alertDialog = new AlertDialog.Builder(reseptiLista.this).create();
             alertDialog.setTitle("Ohje");
-            alertDialog.setMessage("Painamalla +-kuvaketta voit lisätä raaka-aineita jotka kuuluvat reseptiisi. Kun kaikki halutut raaka-aineet on lisätty, paina 'Valmis', jotta resepti tallentuu.");
+            alertDialog.setMessage("Klikkaamalla reseptin nimeä voit joko muokata reseptiä, poistaa sen tai lisätä reseptin raaka-aineet ostoslistalle.");
             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
@@ -272,11 +279,15 @@ public class reseptiLista extends AppCompatActivity {
                     //FIREBASETESTAUS/LISÄÄMINEN
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference();
-                    String key = input.getText().toString();
+                    key = input.getText().toString();
 
                     myRef.child("reseptit").child(key).setValue(input.getText().toString()); // 2.2.2019 Menee oikeaan osoitteeseen, nyt vielä reseptit omiin lokereoihin.
                     //myRef.child("ostos").push().setValue(input.getText().toString()); //Määritetään tietokannan juurelle lapsi johon laitetaan dataa
                     String pushId = myRef.getKey();
+
+                    Intent mene = new Intent(reseptiLista.this, reseptinNaytto.class ); //2.2.2019 avataan toinen luokka jotta saadaan listalle reseptiobjektit
+                    mene.putExtra("key",key);
+                    startActivity(mene);
 
                     //reseptit.add(input.getText().toString());
 
@@ -316,9 +327,9 @@ public class reseptiLista extends AppCompatActivity {
     }
 
 
-    public void removeElement(final String selectedItem, final int position){
+    public void removeElement(final String selectedItem, final int position){ //pöljä nimi, kokeile voiko vaihtaa.. 19.2.2019
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Poista " + selectedItem + "?");
+        builder.setTitle(selectedItem);
         builder.setPositiveButton("Poista", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -342,10 +353,19 @@ public class reseptiLista extends AppCompatActivity {
 
             }
         });
-        builder.setNegativeButton("Peruuta", new DialogInterface.OnClickListener() {
+
+        builder.setNeutralButton("Lisää listalle", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
+            }
+        });
+        builder.setNegativeButton("Muokkaa", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent mene = new Intent(reseptiLista.this, reseptinNaytto.class ); //2.2.2019 avataan toinen luokka jotta saadaan listalle reseptiobjektit
+                mene.putExtra("key",selectedItem);
+                startActivity(mene);
             }
         });
         builder.show();

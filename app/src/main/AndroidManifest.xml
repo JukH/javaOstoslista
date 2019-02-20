@@ -25,8 +25,9 @@
             android:label="Reseptit"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".reseptinNäyttö"
-            android:label="@string/title_activity_resepti_opetus" />
+            android:name=".reseptinNaytto"
+
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>
