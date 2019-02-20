@@ -5,13 +5,14 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="Ostoslista v1.3"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".MainActivity"
-            android:label="OstoslistaDemo v1.1"
+            android:label="OstoslistaDemo v1.3"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,7 +22,12 @@
         </activity>
         <activity
             android:name=".reseptiLista"
-            android:label="@string/title_activity_resepti_lista"></activity>
+            android:label="Reseptit"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".reseptinNaytto"
+
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>
