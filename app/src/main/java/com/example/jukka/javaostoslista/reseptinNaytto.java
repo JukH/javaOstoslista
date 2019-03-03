@@ -39,11 +39,6 @@ public class reseptinNaytto extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference myRef;
 
-
-
-
-
-    //Toimii ja asettaa reseptinäytölle oikean tittelin 19.2.2019
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,17 +46,11 @@ public class reseptinNaytto extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //Tuodaan edellisestä activitystä ruokalajin nimi
+        //Tuodaan edellisestä (reseptiLista) activitystä ruokalajin nimi
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         String  ruokaLaji = bundle.getString("key");
-        reseptinNaytto.this.setTitle(ruokaLaji + " ainekset");
-
-
-
-
-
-
+        reseptinNaytto.this.setTitle(ruokaLaji + " ainekset"); //Asetetaan toolbarin titteli vastaamaan kyseistä ruokalajia
 
         raaka_aineet = new ArrayList<>();
         Collections.addAll(raaka_aineet); //Lisää kokonaisen setin tarvittaessa.
@@ -79,10 +68,9 @@ public class reseptinNaytto extends AppCompatActivity {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
                 String value = dataSnapshot.getValue(String.class);
-                raaka_aineet.add(value); //Lisää tuplana listalle uudelleen avatteassa appia?
+                raaka_aineet.add(value);
                 adapter.notifyDataSetChanged();
                 Collections.sort(raaka_aineet);
-                //storeArrayVal(shoppingList, getApplicationContext()); TÄSSÄ VIKA ETTÄ LISÄSI TUPLANA KÄYNNISTETTÄESSÄ.. TUTKI LISÄÄ!
                 lv.setAdapter(adapter);
             }
 
@@ -114,83 +102,6 @@ public class reseptinNaytto extends AppCompatActivity {
             }
         });
 
-
-
-        /*AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Nyt ollaan reseptiruudussa");
-        final EditText raaka_aine = new EditText(this);
-        builder.setView(raaka_aine);
-        builder.setPositiveButton("Lisää", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //LISÄÄ TÄHÄN ETTÄ MENEE FIREBASEEN!
-
-                //KOMMENTIKSI MUUTETTU 18.1.2019 (OFFLINE-LISÄYS LISTALLE)
-
-                //shoppingList.add(preferredCase(input.getText().toString())); //OFFLINE-LISÄYS
-                //Collections.sort(shoppingList);
-                //storeArrayVal(shoppingList, getApplicationContext());
-                //lv.setAdapter(adapter);
-
-                // LISÄTÄÄN RAAKA-AINEET LISTALLE JOTTA NIITÄ VOI TARKASTELLA/POISTAA 3.2.2019
-
-                raaka_aineet.add(raaka_aine.getText().toString());
-
-
-                //FIREBASETESTAUS/LISÄÄMINEN
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference myRef = database.getReference();
-                String key = raaka_aine.getText().toString();
-
-                //Bundle extras = getIntent().getExtras(); //3.2.2019 TUODAAN mainactivitystä ruokalajin nimi
-
-                //String ruokaLaji = extras.getString("key");
-                //The key argument here must match that used in the other activity
-
-
-                //myRef.child("reseptit").child(ruokaLaji).setValue(raaka_aine.getText().toString()); //3.2.2019 Annetaan ruokalajille inputin mukaan nimi tietokantaan
-                //myRef.child("ostos").push().setValue(input.getText().toString()); //Määritetään tietokannan juurelle lapsi johon laitetaan dataa
-                String pushId = myRef.getKey();
-
-
-                //*****************************
-
-                // Attach a listener to read the data at our posts reference
-
-
-                //LISÄÄ TÄHÄN ETTÄ MENEE FIREBASEEN!
-            }
-        });
-
-        builder.setNegativeButton("Peruuta", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                dialog.cancel();
-            }
-        });
-        builder.show(); */
-
-
-
-        //lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-        //public void onItemClick(AdapterView<?> parentAdapter, View view, int position,
-        //                      long id) {
-
-        //AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-        //alertDialog.setTitle("Ohje");
-        //alertDialog.setMessage("Valitsemalla ruokalajin tarvittavat raaka-aineet lisätään ostoslistalle. +-Symbolia painamalla voit lisätä yksittäisiä ostoksia.");
-        //alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-        //      new DialogInterface.OnClickListener() {
-        //        public void onClick(DialogInterface dialog, int which) {
-        //          dialog.dismiss();
-        //    }
-        //});
-        //alertDialog.show();
-
-        //   }
-        //});
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView parent, View view, final int position, long id) {
                 String selectedItem = ((TextView) view).getText().toString();
@@ -218,7 +129,16 @@ public class reseptinNaytto extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_ohje){
-            Toast.makeText(this, "Lisää raaka-aine", Toast.LENGTH_SHORT).show();
+            AlertDialog alertDialog = new AlertDialog.Builder(reseptinNaytto.this).create();
+            alertDialog.setTitle("Ohje");
+            alertDialog.setMessage("Lisää tähän reseptiin vaaditut raaka-aineet painamalla yläpalkin +-painiketta.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
         }
 
         if (id == R.id.lisääRaakaAine){
@@ -229,38 +149,22 @@ public class reseptinNaytto extends AppCompatActivity {
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    //LISÄÄ TÄHÄN ETTÄ MENEE FIREBASEEN!
 
-                    //KOMMENTIKSI MUUTETTU 18.1.2019 (OFFLINE-LISÄYS LISTALLE)
-
-                    //shoppingList.add(preferredCase(input.getText().toString())); //OFFLINE-LISÄYS
-                    //Collections.sort(shoppingList);
-                    //storeArrayVal(shoppingList, getApplicationContext());
-                    //lv.setAdapter(adapter);
-
-                        Intent intent1 = getIntent();
+                        Intent intent1 = getIntent(); //Tuodaan dataa edellisestä activitystä (Ruokalajin nimi)
                         Bundle bundle1 = intent1.getExtras();
                         String resepti = bundle1.getString("key");
 
-
-                    //FIREBASETESTAUS/LISÄÄMINEN
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("reseptit/" + resepti);
+                    DatabaseReference myRef = database.getReference("reseptit/" + resepti); //HUOM. oikean polun määritys
                     String key = input.getText().toString();
 
-                    myRef.child(key).setValue(input.getText().toString());
-                    //myRef.child("ostos").push().setValue(input.getText().toString()); //Määritetään tietokannan juurelle lapsi johon laitetaan dataa
+                    key = key.substring(0,1).toUpperCase() + key.substring(1).toLowerCase();
+
+                    myRef.child(key).setValue(key);
                     String pushId = myRef.getKey();
 
 
 
-                    //*****************************
-
-                    // Attach a listener to read the data at our posts reference
-
-
-
-                    //LISÄÄ TÄHÄN ETTÄ MENEE FIREBASEEN!
                 }
             });
             builder.setNegativeButton("Peruuta", new DialogInterface.OnClickListener() {
@@ -274,7 +178,7 @@ public class reseptinNaytto extends AppCompatActivity {
             return true;
 
         }
-        Toast.makeText(this, "Raaka-aine lisätty", Toast.LENGTH_SHORT).show();
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -285,19 +189,10 @@ public class reseptinNaytto extends AppCompatActivity {
         builder.setPositiveButton("Poista", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //19.1.2019///////////////////////////////////
+
                 String listaTeksti =(lv.getItemAtPosition(position).toString());
                 myRef.child(listaTeksti).removeValue();
-                //////////////////////////////////////////////
-                raaka_aineet.remove(position);
-                //18.1.2019//POISTO MYÖS FIREBASESTA/////////////////////////////
-                //myRef.setValue(null); //poistaa kaiken TOIMII!!! JATKA TÄSTÄ!!!!
 
-                /////////////////////////////////////////////////////////////////
-                adapter.notifyDataSetChanged();
-                Collections.sort(raaka_aineet);
-                //storeArrayVal(shoppingList, getApplicationContext());
-                lv.setAdapter(adapter);
             }
         });
 

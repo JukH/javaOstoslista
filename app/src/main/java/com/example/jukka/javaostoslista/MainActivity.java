@@ -48,8 +48,6 @@ public class MainActivity extends AppCompatActivity {
     ListView lvMain = null;
     private static MainActivity instance;
 
-
-    //18.1.2019
     FirebaseDatabase database;
     DatabaseReference myRef;
 
@@ -60,23 +58,21 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
-        //18.1.2019 //////////////////////////////////////////////////////////////////////////
+        //Luodaan viittaus tietokantaan (polkuun /ostos) johon voidaan tämän luokan kautta lisätä tuotteita (Näkyy oikeassa listanäkymässä, eli varsinaisella ostoslistalla, ei mene esim. reseptilistaan)
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("ostos");
 
-        //lv = (ListView) findViewById(R.id.listView); // TARVIIKO TÄTÄ TOISTA?
+        //Luodaan kuuntelija tietokantaan, jotta ohjelma osaa päivittää itsensä muutoksien tapahtuessa
         myRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                String value = dataSnapshot.getValue(String.class);
+                String value = dataSnapshot.getValue(String.class); //Poimitaan valittu tuote
 
-                shoppingList.add(value); //Lisää tuplana listalle uudelleen avatteassa appia?
-                adapter.notifyDataSetChanged();
-                Collections.sort(shoppingList);
-                //storeArrayVal(shoppingList, getApplicationContext()); TÄSSÄ VIKA ETTÄ LISÄSI TUPLANA KÄYNNISTETTÄESSÄ.. TUTKI LISÄÄ!
-                lvMain.setAdapter(adapter);
+                shoppingList.add(value); //Lisätään uusi tuote ostoslistaan
+                adapter.notifyDataSetChanged(); //Ilmoitetaan adapterille että on tapahtunut muutos listassa
+                Collections.sort(shoppingList); //Järjestetään lista uusiksi päivitettynä
+                lvMain.setAdapter(adapter); //Näytetään päivitetty lista
 
             }
 
@@ -87,14 +83,13 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                //18.1.2019/////////////////////////////////////////////////////////
+                //Kun tuote poistetaan, tämä metodi poistaa tuotteen listanäkymästä
                 String value = dataSnapshot.getValue(String.class);
-                shoppingList.remove(value);
-                adapter.notifyDataSetChanged();
-                Collections.sort(shoppingList);
-                //storeArrayVal(shoppingList, getApplicationContext());
-                lvMain.setAdapter(adapter);
-                ////////////////////////////////////////////////////////////////////
+                shoppingList.remove(value); //Poistetaan näkyvältä ostoslistalta valittu tuote
+                adapter.notifyDataSetChanged(); //Ilmoitetaan lista-adapterille että on tapahtunut muutos
+                Collections.sort(shoppingList); //Järjestetään lista uusiksi päivitettynä
+                lvMain.setAdapter(adapter); // Näytetään päivitetty lista
+
             }
 
             @Override
@@ -107,61 +102,53 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        ///////////////////////////////////////////////////////////////////////////18.1.2019
 
+        //Koska ollaan onCreate-metodissa:
+        shoppingList = getArrayVal(getApplicationContext()); //Annetaan listalle sisältö
+        Collections.sort(shoppingList); //Järjestetään listan sisältö (aakkosjärjestys)
+        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, shoppingList); //Alustetaan lista-adapteri
+        lvMain = (ListView)findViewById(R.id.listView); //Annetaan listanäkymälle ulkonäkö XML-tiedostosta (id = listView)
+        lvMain.setAdapter(adapter); //Asetetaan adapteri (Näytetään sisältö)
 
-        shoppingList = getArrayVal(getApplicationContext());
-        Collections.sort(shoppingList);
-        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, shoppingList);
-        lvMain = (ListView) findViewById(R.id.listView);
-        lvMain.setAdapter(adapter);
-
+        //Luodaan kuuntelija, jonka avulla voidaan poistaa valittu tuote listalta
         lvMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView parent, View view, final int position, long id) {
                 String selectedItem = ((TextView) view).getText().toString();
                 if (selectedItem.trim().equals(shoppingList.get(position).trim())) {
                     removeElement(selectedItem, position);
                 } else {
-                    Toast.makeText(getApplicationContext(),"Can not be removed", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"Ei voida poistaa", Toast.LENGTH_LONG).show();
                 }
             }
         });
 
 
     }
-
+    //Asetetaan menu näkyväksi
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
+    //Asetetaan kuuntelijat valikko-itemeiden käyttöä varten
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
 
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
+        //Jos valitaan "ohje", suoritetaan seuraavat toiminnot:
         if (id == R.id.action_ohje) {
-            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-            alertDialog.setTitle("Ohje");
-            alertDialog.setMessage("Testataan branchjuttuja");
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create(); //Avataan pikku-ikkuna
+            alertDialog.setTitle("Ohje"); //Titteli ikkunalle
+            alertDialog.setMessage("Voit lisätä yksittäisiä ostoksia yläpalkin +-painikkeesta tai selata, lisätä ja muokata reseptejä valitsemalla valikosta 'Reseptit'."); //Asetetaan viesti
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", //Luodaan "kuittaus"-nappi...
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
+                            dialog.dismiss(); //...jota painaessa suljetaan ohje.
                         }
                     });
-            alertDialog.show();
+            alertDialog.show(); //Asetetaan viesti-ikkuna näkyväksi
         }
 
-        //if (id == R.id.action_settings) {
-          //  Intent mene = new Intent(MainActivity.this, reseptiLista.class );
-           // startActivity(mene);
-           // return true;
-       // }
-        //Ylläolevalla saadaan avattua uusi activity menun kautta, jätetään muistiinpanoksi.
-        //*******************************************************************************************************Yksittäisen ostoksen lisäystoiminnot:
         if(id == R.id.lisääOstos) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Lisää ostos");
@@ -170,115 +157,66 @@ public class MainActivity extends AppCompatActivity {
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    //LISÄÄ TÄHÄN ETTÄ MENEE FIREBASEEN!
 
-                    //KOMMENTIKSI MUUTETTU 18.1.2019 (OFFLINE-LISÄYS LISTALLE)
-
-                    //shoppingList.add(preferredCase(input.getText().toString())); //OFFLINE-LISÄYS
-                    //Collections.sort(shoppingList);
-                    //storeArrayVal(shoppingList, getApplicationContext());
-                    //lv.setAdapter(adapter);
-
-                    //FIREBASETESTAUS/LISÄÄMINEN
+                    //Otetaan yhteys tietokantaan
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference();
-                    String key = input.getText().toString();
 
-                    myRef.child("ostos").child(key).setValue(input.getText().toString());
-                    //myRef.child("ostos").push().setValue(input.getText().toString()); //Määritetään tietokannan juurelle lapsi johon laitetaan dataa
-                    String pushId = myRef.getKey();
+                    String key = input.getText().toString(); //Poimitaan text-inputista String
 
+                    key = key.substring(0,1).toUpperCase() + key.substring(1).toLowerCase(); //Asetetaan annettu String alkavaksi isolla alkukirjaimella (Listan siisteys)
 
+                    myRef.child("ostos").child(key).setValue(key); //Sijoitetaan annettu input tietokantaan polkuun: /ostos/input
 
-                    //*****************************
-
-                    // Attach a listener to read the data at our posts reference
-
-
-
-                    //LISÄÄ TÄHÄN ETTÄ MENEE FIREBASEEN!
                 }
             });
-            builder.setNegativeButton("Peruuta", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton("Peruuta", new DialogInterface.OnClickListener() { //Voidaan peruuttaa input
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
-                    dialog.cancel();
+                    dialog.cancel(); //Suljetaan input-ikkuna jos klikataan "Peruuta"
                 }
             });
             builder.show();
             return true;
         }
-        //KOKO LISTAN TYHJENNYS ////////////////////////////////////////////////////////////////////////////////////////////////////////
-        if(id == R.id.action_clear) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Tyhjennä koko lista?");
-            builder.setPositiveButton("Tyhjennä", new DialogInterface.OnClickListener() {
+        //Koko listan tyhjentäminen kerralla
+        if(id == R.id.action_clear) { //Jos klikataan valikossa "tyhennä koko lista"..
+            AlertDialog.Builder builder = new AlertDialog.Builder(this); //..avataan dialogi-ikkuna
+            builder.setTitle("Tyhjennä koko lista?"); //Asetetaan viesti ikkunaan
+            builder.setPositiveButton("Tyhjennä", new DialogInterface.OnClickListener() { //Asetetaan tyhjennynappi
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    //shoppingList.clear();
-                    //Collections.sort(shoppingList);
-                    //storeArrayVal(shoppingList, getApplicationContext());
-                    //lv.setAdapter(adapter);
-                    myRef.setValue(null);
+                public void onClick(DialogInterface dialog, int which) { //Jos klikataan "Tyhjennä"
+                    myRef.setValue(null); //Tyhjennetään annettu tietokantapolku (myref = /ostos), eli kaikki ostokset poistuvat listalta
                 }
             });
-            builder.setNegativeButton("Peruuta", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton("Peruuta", new DialogInterface.OnClickListener() { //Peruutus-nappi
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
+                    dialog.cancel(); //Klikatessa "Peruuta"-nappia, suljetaan ikkuna
                 }
             });
             builder.show();
             return true;
         }
 
-        if(id == R.id.action_reseptit){ //2.2.2019 koitan rakentaa lisäyksen tietokantaan "resepti-polkuun"
+        if(id == R.id.action_reseptit){ //Jos klikataan valikossa "reseptit"..
 
-            Intent mene = new Intent(MainActivity.this, reseptiLista.class ); //2.2.2019 avataan toinen luokka jotta saadaan listalle reseptiobjektit
-            // mene.putExtra("key",ruokaNimi);
-            startActivity(mene);
+            Intent mene = new Intent(MainActivity.this, reseptiLista.class ); //...luodaan intent jolla voidaan avata toinen luokka (reseptilista) jotta saadaan listalle reseptiobjektit
+            startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
 
         }
-
-
-
-
-
-
-
-
-
-
         return super.onOptionsItemSelected(item);
     }
 
-    public static String preferredCase(String original)
-    {
-        if (original.isEmpty())
-            return original;
-
-        return original.substring(0, 1).toUpperCase() + original.substring(1).toLowerCase();
-    }
-
-
-    public static void storeArrayVal( ArrayList<String> inArrayList, Context context)
-    {
-        Set<String> WhatToWrite = new HashSet<String>(inArrayList);
-        SharedPreferences WordSearchPutPrefs = context.getSharedPreferences("dbArrayValues", Activity.MODE_PRIVATE);
-        SharedPreferences.Editor prefEditor = WordSearchPutPrefs.edit();
-        prefEditor.putStringSet("myArray", WhatToWrite);
-        prefEditor.commit();
-    }
-
-    public static ArrayList getArrayVal( Context dan)
+    public static ArrayList getArrayVal( Context dan) //Listan sisällön luonti, tämä metodi hieman hämärän peitossa itsellä
     {
         SharedPreferences WordSearchGetPrefs = dan.getSharedPreferences("dbArrayValues",Activity.MODE_PRIVATE);
         Set<String> tempSet = new HashSet<String>();
         tempSet = WordSearchGetPrefs.getStringSet("myArray", tempSet);
         return new ArrayList<String>(tempSet);
     }
-    //TUOTTEEN POISTAMINEN
+    //Tuotteen poisto-metodi
     public void removeElement(final String selectedItem, final int position){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Poista " + selectedItem + "?");
@@ -286,26 +224,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                //19.1.2019///////////////////////////////////
-                String listaTeksti =(lvMain.getItemAtPosition(position).toString());
-                myRef.child(listaTeksti).removeValue();
-                //////////////////////////////////////////////
-                shoppingList.remove(position);
-                //18.1.2019//POISTO MYÖS FIREBASESTA/////////////////////////////
-                //myRef.setValue(null); //poistaa kaiken TOIMII!!! JATKA TÄSTÄ!!!!
-
-                /////////////////////////////////////////////////////////////////
-                adapter.notifyDataSetChanged();
-                Collections.sort(shoppingList);
-                //storeArrayVal(shoppingList, getApplicationContext());
-                lvMain.setAdapter(adapter);
-
-
-
-
+                String listaTeksti =(lvMain.getItemAtPosition(position).toString()); //Poimitaan klikatusta lista-itemistä String
+                myRef.child(listaTeksti).removeValue(); //Poistetaan saadun Stringin avulla tietokannasta valittu item, tietokantakuuntelijan kautta päivittyy myös itse listanäkymä
             }
         });
-        builder.setNegativeButton("Peruuta", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Peruuta", new DialogInterface.OnClickListener() { //Peruutusnappi
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
@@ -313,7 +236,5 @@ public class MainActivity extends AppCompatActivity {
         });
         builder.show();
     }
-        ////////////////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
 }
