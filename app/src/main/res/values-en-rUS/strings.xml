@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VegeX</string>
+    <string name="action_add">Add item</string>
+    <string name="action_clear">Clear list</string>
+    <string name="title_activity_resepti_lista">Recipe list</string>
+    <string name="action_reseptiOpetus">Add new recipe</string>
+    <string name="action_ohje">Instructions</string>
+    <string name="action_muokkaaReseptiä">Modify recipe</string>
+    <string name="action_poistaResepti">Remove recipe</string>
+    <string name="lisäysruutu">Add ingredient</string>
+    <string name="reseptiOpetusNappi">Add</string>
+    <string name="title_activity_resepti_opetus">add_recipe</string>
+    <string name="lisaa_ostos">Add item</string>
+    <string name="peruuta">Cancel</string>
+    <string name="ok">Ok</string>
+    <string name="reseptit_menu">Recipes</string>
+    <string name="lisaa_resepti_menu">Add new</string>
+    <string name="ohje">Instructions</string>
+    <string name="poista_">Remove</string>
+    <string name="poista">"Remove "</string>
+    <string name="tyhjenna">Clear</string>
+    <string name="tyhjenna_lista">Clear every item from list?</string>
+    <string name="ohjeet_main">You can add single items by tapping the +-symbol or browse, add or modify recipes by choosing \"Recipes\" from the menu.</string>
+    <string name="ohjeet_resepti">By clicking the name of the recipe you can modify, delete or add the ingredients of the chosen recipe to your shopping list.</string>
+    <string name="pakkolisata">You have to write something</string>
+    <string name="nimea_resepti">Name the recipe:</string>
+    <string name="virhe">Error</string>
+    <string name="lisaa_listalle">Add to shopping list</string>
+    <string name="lisatty_listalle">-ingredients added to the shopping list</string>
+    <string name="muokkaa">Modify</string>
+    <string name="ainekset_aineslista">" ingredients"</string>
+    <string name="ohje_aineslista">Add the ingredients for this recipe by tapping the +-symbol on the toolbar.</string>
+    <string name="lisaa_raaka_aine_reseptiin">Add ingredient</string>
+    <string name="resepti_titteli">Recipes</string>
+    <string name="versio">Shopping list v1.4</string>
+</resources>

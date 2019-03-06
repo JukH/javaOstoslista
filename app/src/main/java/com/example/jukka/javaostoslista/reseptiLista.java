@@ -54,6 +54,7 @@ public class reseptiLista extends AppCompatActivity {
         setContentView(R.layout.activity_resepti_lista);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        reseptiLista.this.setTitle(getString(R.string.resepti_titteli));
 
 
         database = FirebaseDatabase.getInstance();
@@ -71,7 +72,7 @@ public class reseptiLista extends AppCompatActivity {
                     Collections.sort(reseptit);
                     lv.setAdapter(adapter);
                 } catch (Exception e){
-                    Toast.makeText(reseptiLista.this, "Virhe", Toast.LENGTH_LONG).show();
+                    Toast.makeText(reseptiLista.this, getString(R.string.virhe), Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -115,7 +116,7 @@ public class reseptiLista extends AppCompatActivity {
                 if (selectedItem.trim().equals(reseptit.get(position).trim())) {
                     removeElement(selectedItem, position);
                 } else {
-                    Toast.makeText(getApplicationContext(),"Ei voida poistaa", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),getString(R.string.virhe), Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -139,8 +140,8 @@ public class reseptiLista extends AppCompatActivity {
 
         if(id == R.id.action_ohje){
             AlertDialog alertDialog = new AlertDialog.Builder(reseptiLista.this).create();
-            alertDialog.setTitle("Ohje");
-            alertDialog.setMessage("Klikkaamalla reseptin nimeä voit joko muokata reseptiä, poistaa sen tai lisätä reseptin raaka-aineet ostoslistalle.");
+            alertDialog.setTitle(getString(R.string.ohje));
+            alertDialog.setMessage(getString(R.string.ohjeet_resepti));
             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
@@ -152,7 +153,7 @@ public class reseptiLista extends AppCompatActivity {
 
         if(id == R.id.action_reseptiOpetus){
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Anna nimi reseptille:");
+            builder.setTitle(getString(R.string.nimea_resepti));
             final EditText input = new EditText(this);
             builder.setView(input);
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -164,19 +165,22 @@ public class reseptiLista extends AppCompatActivity {
                     DatabaseReference myRef = database.getReference();
                     String key = input.getText().toString();
 
-                    key = key.substring(0,1).toUpperCase() + key.substring(1).toLowerCase();
 
-                    myRef.child("reseptit").child(key).setValue(key); // 2.2.2019 Menee oikeaan osoitteeseen, nyt vielä reseptit omiin lokereoihin.
 
-                    String pushId = myRef.getKey();
+                        key = key.substring(0, 1).toUpperCase() + key.substring(1).toLowerCase();
 
-                    Intent mene = new Intent(reseptiLista.this, reseptinNaytto.class ); //2.2.2019 avataan toinen luokka jotta saadaan listalle reseptiobjektit
-                    mene.putExtra("key",key);
-                    startActivity(mene);
+                        myRef.child("reseptit").child(key).setValue(key); // 2.2.2019 Menee oikeaan osoitteeseen, nyt vielä reseptit omiin lokereoihin.
+
+                        String pushId = myRef.getKey();
+
+                        Intent mene = new Intent(reseptiLista.this, reseptinNaytto.class); //2.2.2019 avataan toinen luokka jotta saadaan listalle reseptiobjektit
+                        mene.putExtra("key", key);
+                        startActivity(mene);
+
 
                 }
             });
-            builder.setNegativeButton("Peruuta", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(getString(R.string.peruuta), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
@@ -197,7 +201,7 @@ public class reseptiLista extends AppCompatActivity {
     public void removeElement(final String selectedItem, final int position){ //Nimestä huolimatta tämä metodi hoitaa ostoksien lisäämisen resepti-listalta ostoslistalle
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(selectedItem);
-        builder.setPositiveButton("Poista", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.poista_), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -218,7 +222,7 @@ public class reseptiLista extends AppCompatActivity {
             }
         });
 
-        builder.setNeutralButton("Lisää listalle", new DialogInterface.OnClickListener() {
+        builder.setNeutralButton(getString(R.string.lisaa_listalle), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -268,14 +272,14 @@ public class reseptiLista extends AppCompatActivity {
 
 
 
-                Toast.makeText(reseptiLista.this, selectedItem + "-ainekset lisätty ostoslistalle", Toast.LENGTH_SHORT).show();
+                Toast.makeText(reseptiLista.this, selectedItem + getString(R.string.lisatty_listalle), Toast.LENGTH_SHORT).show();
 
 
 
 
             }
         });
-        builder.setNegativeButton("Muokkaa", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.muokkaa), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 

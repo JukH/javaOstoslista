@@ -50,7 +50,7 @@ public class reseptinNaytto extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         String  ruokaLaji = bundle.getString("key");
-        reseptinNaytto.this.setTitle(ruokaLaji + " ainekset"); //Asetetaan toolbarin titteli vastaamaan kyseistä ruokalajia
+        reseptinNaytto.this.setTitle(ruokaLaji + getString(R.string.ainekset_aineslista)); //Asetetaan toolbarin titteli vastaamaan kyseistä ruokalajia
 
         raaka_aineet = new ArrayList<>();
         Collections.addAll(raaka_aineet); //Lisää kokonaisen setin tarvittaessa.
@@ -108,7 +108,7 @@ public class reseptinNaytto extends AppCompatActivity {
                 if (selectedItem.trim().equals(raaka_aineet.get(position).trim())) {
                     removeElement(selectedItem, position);
                 } else {
-                    Toast.makeText(getApplicationContext(),"Can not be removed", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),getString(R.string.virhe), Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -130,8 +130,8 @@ public class reseptinNaytto extends AppCompatActivity {
 
         if (id == R.id.action_ohje){
             AlertDialog alertDialog = new AlertDialog.Builder(reseptinNaytto.this).create();
-            alertDialog.setTitle("Ohje");
-            alertDialog.setMessage("Lisää tähän reseptiin vaaditut raaka-aineet painamalla yläpalkin +-painiketta.");
+            alertDialog.setTitle(getString(R.string.ohje));
+            alertDialog.setMessage(getString(R.string.ohje_aineslista));
             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
@@ -143,7 +143,7 @@ public class reseptinNaytto extends AppCompatActivity {
 
         if (id == R.id.lisääRaakaAine){
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Lisää raaka-aine");
+            builder.setTitle(getString(R.string.lisaa_raaka_aine_reseptiin));
             final EditText input = new EditText(this);
             builder.setView(input);
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -167,7 +167,7 @@ public class reseptinNaytto extends AppCompatActivity {
 
                 }
             });
-            builder.setNegativeButton("Peruuta", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(getString(R.string.peruuta), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
@@ -186,7 +186,7 @@ public class reseptinNaytto extends AppCompatActivity {
     public void removeElement(final String selectedItem, final int position){ //pöljä nimi, kokeile voiko vaihtaa.. 19.2.2019
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(selectedItem);
-        builder.setPositiveButton("Poista", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.poista_), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -196,7 +196,7 @@ public class reseptinNaytto extends AppCompatActivity {
             }
         });
 
-        builder.setNegativeButton("Peruuta", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.peruuta), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();

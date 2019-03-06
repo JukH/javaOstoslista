@@ -11,7 +11,7 @@
     <item
         android:id="@+id/action_reseptiOpetus"
         android:orderInCategory="200"
-        android:title="Lisää uusi"
+        android:title="@string/lisaa_resepti_menu"
         app:showAsAction="never" />
 
 

@@ -1,6 +1,7 @@
 package com.example.jukka.javaostoslista;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -122,6 +124,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+           // lvMain.setBackgroundColor(Color.LTGRAY); Saa vaihdettua listan taustavärin
+
+
 
     }
     //Asetetaan menu näkyväksi
@@ -138,8 +143,8 @@ public class MainActivity extends AppCompatActivity {
         //Jos valitaan "ohje", suoritetaan seuraavat toiminnot:
         if (id == R.id.action_ohje) {
             AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create(); //Avataan pikku-ikkuna
-            alertDialog.setTitle("Ohje"); //Titteli ikkunalle
-            alertDialog.setMessage("Voit lisätä yksittäisiä ostoksia yläpalkin +-painikkeesta tai selata, lisätä ja muokata reseptejä valitsemalla valikosta 'Reseptit'."); //Asetetaan viesti
+            alertDialog.setTitle(getString(R.string.ohje)); //Titteli ikkunalle
+            alertDialog.setMessage(getString(R.string.ohjeet_main)); //Asetetaan viesti
             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", //Luodaan "kuittaus"-nappi...
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
@@ -151,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(id == R.id.lisääOstos) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Lisää ostos");
+            builder.setTitle(getString(R.string.lisaa_ostos));
             final EditText input = new EditText(this);
             builder.setView(input);
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -161,16 +166,19 @@ public class MainActivity extends AppCompatActivity {
                     //Otetaan yhteys tietokantaan
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference();
+                    if(input != null) {
+                        String key = input.getText().toString(); //Poimitaan text-inputista String
 
-                    String key = input.getText().toString(); //Poimitaan text-inputista String
+                        key = key.substring(0, 1).toUpperCase() + key.substring(1).toLowerCase(); //Asetetaan annettu String alkavaksi isolla alkukirjaimella (Listan siisteys)
 
-                    key = key.substring(0,1).toUpperCase() + key.substring(1).toLowerCase(); //Asetetaan annettu String alkavaksi isolla alkukirjaimella (Listan siisteys)
-
-                    myRef.child("ostos").child(key).setValue(key); //Sijoitetaan annettu input tietokantaan polkuun: /ostos/input
+                        myRef.child("ostos").child(key).setValue(key); //Sijoitetaan annettu input tietokantaan polkuun: /ostos/input
+                    } else {
+                        Toast.makeText(getApplicationContext(),getString(R.string.pakkolisata), Toast.LENGTH_LONG).show();
+                    }
 
                 }
             });
-            builder.setNegativeButton("Peruuta", new DialogInterface.OnClickListener() { //Voidaan peruuttaa input
+            builder.setNegativeButton(getString(R.string.peruuta), new DialogInterface.OnClickListener() { //Voidaan peruuttaa input
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
@@ -183,14 +191,14 @@ public class MainActivity extends AppCompatActivity {
         //Koko listan tyhjentäminen kerralla
         if(id == R.id.action_clear) { //Jos klikataan valikossa "tyhennä koko lista"..
             AlertDialog.Builder builder = new AlertDialog.Builder(this); //..avataan dialogi-ikkuna
-            builder.setTitle("Tyhjennä koko lista?"); //Asetetaan viesti ikkunaan
-            builder.setPositiveButton("Tyhjennä", new DialogInterface.OnClickListener() { //Asetetaan tyhjennynappi
+            builder.setTitle(getString(R.string.tyhjenna_lista)); //Asetetaan viesti ikkunaan
+            builder.setPositiveButton(getString(R.string.tyhjenna), new DialogInterface.OnClickListener() { //Asetetaan tyhjennynappi
                 @Override
                 public void onClick(DialogInterface dialog, int which) { //Jos klikataan "Tyhjennä"
                     myRef.setValue(null); //Tyhjennetään annettu tietokantapolku (myref = /ostos), eli kaikki ostokset poistuvat listalta
                 }
             });
-            builder.setNegativeButton("Peruuta", new DialogInterface.OnClickListener() { //Peruutus-nappi
+            builder.setNegativeButton(getString(R.string.peruuta), new DialogInterface.OnClickListener() { //Peruutus-nappi
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.cancel(); //Klikatessa "Peruuta"-nappia, suljetaan ikkuna
@@ -219,8 +227,8 @@ public class MainActivity extends AppCompatActivity {
     //Tuotteen poisto-metodi
     public void removeElement(final String selectedItem, final int position){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Poista " + selectedItem + "?");
-        builder.setPositiveButton("Poista", new DialogInterface.OnClickListener() {
+        builder.setTitle(getString(R.string.poista) + selectedItem + "?");
+        builder.setPositiveButton(getString(R.string.poista_), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -228,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
                 myRef.child(listaTeksti).removeValue(); //Poistetaan saadun Stringin avulla tietokannasta valittu item, tietokantakuuntelijan kautta päivittyy myös itse listanäkymä
             }
         });
-        builder.setNegativeButton("Peruuta", new DialogInterface.OnClickListener() { //Peruutusnappi
+        builder.setNegativeButton(getString(R.string.peruuta), new DialogInterface.OnClickListener() { //Peruutusnappi
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
