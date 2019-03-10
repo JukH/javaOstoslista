@@ -166,14 +166,14 @@ public class MainActivity extends AppCompatActivity {
                     //Otetaan yhteys tietokantaan
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference();
-                    if(input != null) {
-                        String key = input.getText().toString(); //Poimitaan text-inputista String
 
+                        String key = input.getText().toString(); //Poimitaan text-inputista String
+                    if(key.equals(null) || key.equals("")) { //Tsekataan ettei ole tyhjä input (kaatuu muuten)
+                        Toast.makeText(getApplicationContext(),getString(R.string.pakkolisata), Toast.LENGTH_LONG).show();
+                    } else {
                         key = key.substring(0, 1).toUpperCase() + key.substring(1).toLowerCase(); //Asetetaan annettu String alkavaksi isolla alkukirjaimella (Listan siisteys)
 
                         myRef.child("ostos").child(key).setValue(key); //Sijoitetaan annettu input tietokantaan polkuun: /ostos/input
-                    } else {
-                        Toast.makeText(getApplicationContext(),getString(R.string.pakkolisata), Toast.LENGTH_LONG).show();
                     }
 
                 }

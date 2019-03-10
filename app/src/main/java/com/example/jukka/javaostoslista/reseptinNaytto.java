@@ -158,10 +158,14 @@ public class reseptinNaytto extends AppCompatActivity {
                     DatabaseReference myRef = database.getReference("reseptit/" + resepti); //HUOM. oikean polun määritys
                     String key = input.getText().toString();
 
-                    key = key.substring(0,1).toUpperCase() + key.substring(1).toLowerCase();
+                    if(key.equals("")){
+                        Toast.makeText(getApplicationContext(),getString(R.string.pakkolisata), Toast.LENGTH_LONG).show();
+                    } else {
+                        key = key.substring(0, 1).toUpperCase() + key.substring(1).toLowerCase();
 
-                    myRef.child(key).setValue(key);
-                    String pushId = myRef.getKey();
+                        myRef.child(key).setValue(key);
+                        String pushId = myRef.getKey();
+                    }
 
 
 

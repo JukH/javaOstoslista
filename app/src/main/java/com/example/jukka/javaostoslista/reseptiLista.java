@@ -167,15 +167,21 @@ public class reseptiLista extends AppCompatActivity {
 
 
 
-                        key = key.substring(0, 1).toUpperCase() + key.substring(1).toLowerCase();
 
-                        myRef.child("reseptit").child(key).setValue(key); // 2.2.2019 Menee oikeaan osoitteeseen, nyt vielä reseptit omiin lokereoihin.
 
-                        String pushId = myRef.getKey();
+                        if(key.equals(null) || key.equals("")){
+                            Toast.makeText(getApplicationContext(),getString(R.string.pakkolisata), Toast.LENGTH_LONG).show();
+                        } else {
 
-                        Intent mene = new Intent(reseptiLista.this, reseptinNaytto.class); //2.2.2019 avataan toinen luokka jotta saadaan listalle reseptiobjektit
-                        mene.putExtra("key", key);
-                        startActivity(mene);
+                            key = key.substring(0, 1).toUpperCase() + key.substring(1).toLowerCase();
+                            myRef.child("reseptit").child(key).setValue(key); // 2.2.2019 Menee oikeaan osoitteeseen, nyt vielä reseptit omiin lokereoihin.
+
+                            String pushId = myRef.getKey();
+
+                            Intent mene = new Intent(reseptiLista.this, reseptinNaytto.class); //2.2.2019 avataan toinen luokka jotta saadaan listalle reseptiobjektit
+                            mene.putExtra("key", key);
+                            startActivity(mene);
+                        }
 
 
                 }
