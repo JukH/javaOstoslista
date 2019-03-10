@@ -12,18 +12,20 @@
 
         <activity
             android:name=".MainActivity"
-            android:label="OstoslistaDemo v1.3"
+            android:label="@string/versio"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"
+                    />
             </intent-filter>
         </activity>
         <activity
             android:name=".reseptiLista"
             android:label="Reseptit"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar"
+            />
         <activity
             android:name=".reseptinNaytto"
 

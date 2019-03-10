@@ -1,18 +1,36 @@
 <resources>
-    <string name="app_name">VegeX</string>
+    <string name="app_name">Ostoslista</string>
+    <string name="versio">Ostoslista v1.4</string>
     <string name="action_add">Lisää ostos</string>
     <string name="action_clear">Tyhjennä lista</string>
     <string name="title_activity_resepti_lista">reseptiLista</string>
     <string name="action_reseptiOpetus">Opeta uusi resepti</string>
     <string name="action_ohje">Ohje</string>
-    <string name="action_tortillaPizzat">Tortillapizzat</string>
-    <string name="action_kasvisKastikeRiisillä">Kasviskastike riisillä</string>
-    <string name="action_perusSetti">Perustarpeet</string>
-    <string name="action_kasvisLasagne">Kasvislasagne</string>
     <string name="action_muokkaaReseptiä">Muokkaa reseptiä</string>
     <string name="action_poistaResepti">Poista resepti</string>
     <string name="lisäysruutu">Lisää raaka-aine</string>
     <string name="reseptiOpetusNappi">Lisää</string>
+    <string name="lisaa_ostos">Lisää ostos</string>
     <string name="title_activity_resepti_opetus">resepti_opetus</string>
-
+    <string name="peruuta">Peruuta</string>
+    <string name="ok">Ok</string>
+    <string name="reseptit_menu">Reseptit</string>
+    <string name="lisaa_resepti_menu">Lisää uusi</string>
+    <string name="ohje">Ohje</string>
+    <string name="ohjeet_main">Voit lisätä yksittäisiä ostoksia yläpalkin +-painikkeesta tai selata, lisätä ja muokata reseptejä valitsemalla valikosta "Reseptit".</string>
+    <string name="ohjeet_resepti">Klikkaamalla reseptin nimeä voit joko muokata reseptiä, poistaa sen tai lisätä reseptin raaka-aineet ostoslistalle.</string>
+    <string name="tyhjenna_lista">Tyhjennä koko lista?</string>
+    <string name="tyhjenna">Tyhjennä</string>
+    <string name="poista">Poista </string>
+    <string name="poista_">Poista</string>
+    <string name="pakkolisata">Kirjoita jotain</string>
+    <string name="nimea_resepti">Anna nimi reseptille:</string>
+    <string name="virhe">Virhe</string>
+    <string name="lisaa_listalle">Lisää listalle</string>
+    <string name="lisatty_listalle">-ainekset lisätty ostoslistalle</string>
+    <string name="muokkaa">Muokkaa</string>
+    <string name="ainekset_aineslista"> ainekset</string>
+    <string name="ohje_aineslista">Lisää tähän reseptiin vaaditut raaka-aineet painamalla yläpalkin +-painiketta.</string>
+    <string name="lisaa_raaka_aine_reseptiin">Lisää raaka-aine</string>
+    <string name="resepti_titteli">Reseptit</string>
 </resources>

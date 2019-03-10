@@ -11,7 +11,7 @@
     <item
         android:id="@+id/action_reseptit"
         android:orderInCategory="200"
-        android:title="Reseptit"
+        android:title="@string/reseptit_menu"
         app:showAsAction="never" />
 
     <item
