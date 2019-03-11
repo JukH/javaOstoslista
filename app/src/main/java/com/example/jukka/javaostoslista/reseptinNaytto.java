@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,6 +36,8 @@ public class reseptinNaytto extends AppCompatActivity {
     ArrayList<String> raaka_aineet = null;
     ArrayAdapter<String> adapter = null;
     ListView lv = null;
+
+    String kayttaja_id = FirebaseAuth.getInstance().getCurrentUser().getUid(); //User-id talteen
 
     FirebaseDatabase database;
     DatabaseReference myRef;
@@ -61,7 +64,7 @@ public class reseptinNaytto extends AppCompatActivity {
 
 
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("reseptit/"+ruokaLaji);
+        myRef = database.getReference("Users/" + kayttaja_id + "/reseptit/"+ruokaLaji);
 
         myRef.addChildEventListener(new ChildEventListener() {
             @Override
@@ -155,7 +158,7 @@ public class reseptinNaytto extends AppCompatActivity {
                         String resepti = bundle1.getString("key");
 
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("reseptit/" + resepti); //HUOM. oikean polun määritys
+                    DatabaseReference myRef = database.getReference("Users/" + kayttaja_id + "/reseptit/" + resepti); //HUOM. oikean polun määritys
                     String key = input.getText().toString();
 
                     if(key.equals("")){

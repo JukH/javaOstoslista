@@ -35,6 +35,7 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 import android.view.View;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -49,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     ListView lvMain = null;
     private static MainActivity instance;
 
+    String kayttaja_id = FirebaseAuth.getInstance().getCurrentUser().getUid(); //Otetaan user-id talteen
+
     FirebaseDatabase database;
     DatabaseReference myRef;
 
@@ -61,8 +64,9 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         //Luodaan viittaus tietokantaan (polkuun /ostos) johon voidaan tämän luokan kautta lisätä tuotteita (Näkyy oikeassa listanäkymässä, eli varsinaisella ostoslistalla, ei mene esim. reseptilistaan)
+
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("ostos");
+        myRef = database.getReference("Users/" + kayttaja_id + "/ostos"); // TESTATAAN JOSKO MENISI JOKAISEN KÄYTTÄJÄN OMAAN POLKUUN
 
         //Luodaan kuuntelija tietokantaan, jotta ohjelma osaa päivittää itsensä muutoksien tapahtuessa
         myRef.addChildEventListener(new ChildEventListener() {
@@ -167,13 +171,14 @@ public class MainActivity extends AppCompatActivity {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference();
 
+
                         String key = input.getText().toString(); //Poimitaan text-inputista String
                     if(key.equals(null) || key.equals("")) { //Tsekataan ettei ole tyhjä input (kaatuu muuten)
                         Toast.makeText(getApplicationContext(),getString(R.string.pakkolisata), Toast.LENGTH_LONG).show();
                     } else {
                         key = key.substring(0, 1).toUpperCase() + key.substring(1).toLowerCase(); //Asetetaan annettu String alkavaksi isolla alkukirjaimella (Listan siisteys)
 
-                        myRef.child("ostos").child(key).setValue(key); //Sijoitetaan annettu input tietokantaan polkuun: /ostos/input
+                        myRef.child("Users/" + kayttaja_id + "/ostos").child(key).setValue(key); //Sijoitetaan annettu input tietokantaan polkuun: /ostos/input
                     }
 
                 }

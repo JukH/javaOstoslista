@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -40,6 +41,8 @@ public class reseptiLista extends AppCompatActivity {
     ArrayAdapter<String> adapter = null;
     ListView lv = null;
 
+    String kayttaja_id = FirebaseAuth.getInstance().getCurrentUser().getUid(); //User-id talteen
+
 
     FirebaseDatabase database;
     DatabaseReference myRef;
@@ -58,7 +61,7 @@ public class reseptiLista extends AppCompatActivity {
 
 
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("reseptit"); //HUOM. viittaus eri polkuun tietokannassa
+        myRef = database.getReference("Users/" + kayttaja_id + "/reseptit"); //HUOM. viittaus eri polkuun tietokannassa
 
         myRef.addChildEventListener(new ChildEventListener() {
             @Override
@@ -66,7 +69,7 @@ public class reseptiLista extends AppCompatActivity {
 
                 try {
 
-                    String testi = dataSnapshot.getKey().toString();
+                    String testi = dataSnapshot.getKey();
                     reseptit.add(testi); //Lisää tuplana listalle uudelleen avatteassa appia?
                     adapter.notifyDataSetChanged();
                     Collections.sort(reseptit);
@@ -161,6 +164,7 @@ public class reseptiLista extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int which) {
 
                     //FIREBASETESTAUS/LISÄÄMINEN
+
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference();
                     String key = input.getText().toString();
@@ -174,7 +178,7 @@ public class reseptiLista extends AppCompatActivity {
                         } else {
 
                             key = key.substring(0, 1).toUpperCase() + key.substring(1).toLowerCase();
-                            myRef.child("reseptit").child(key).setValue(key); // 2.2.2019 Menee oikeaan osoitteeseen, nyt vielä reseptit omiin lokereoihin.
+                            myRef.child("Users/" + kayttaja_id + "/reseptit").child(key).setValue(key); // 2.2.2019 Menee oikeaan osoitteeseen, nyt vielä reseptit omiin lokereoihin.
 
                             String pushId = myRef.getKey();
 
@@ -233,9 +237,9 @@ public class reseptiLista extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
 
                                                                                 ////////////////////////////////////////////////////////////////////////////
-                myRefReseptinHaku = database.getInstance().getReference("reseptit/"+selectedItem);
+                myRefReseptinHaku = database.getInstance().getReference("Users/" + kayttaja_id + "/reseptit/"+selectedItem);
                 myRefResepti = database.getReference();
-                myRefOstosLista = database.getReference("ostos");
+                myRefOstosLista = database.getReference("Users/" + kayttaja_id + "ostos");
 
 
 
@@ -258,7 +262,7 @@ public class reseptiLista extends AppCompatActivity {
 
 
 
-                                            myRefResepti.child("ostos").child(value + " (" + selectedItem + ")").setValue(value + " (" + selectedItem + ")");  //Lisätään reseptin sisältämät tuotteet ostoslistalle ja liitetään perään reseptin nimi
+                                            myRefResepti.child("Users/" + kayttaja_id + "/ostos").child(value + " (" + selectedItem + ")").setValue(value + " (" + selectedItem + ")");  //Lisätään reseptin sisältämät tuotteet ostoslistalle ja liitetään perään reseptin nimi
 
                                         }
                                 }
