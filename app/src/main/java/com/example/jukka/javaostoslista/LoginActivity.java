@@ -48,7 +48,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         firebaseAuth = FirebaseAuth.getInstance();
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken("32300194624-d3fifudd0hgdjv4puabeus2pci8floc3.apps.googleusercontent.com")
+                .requestIdToken(getString(R.string.defaultti_web_client_id))
                 .requestEmail()
                 .build();
 
