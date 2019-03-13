@@ -3,11 +3,10 @@ package com.example.jukka.javaostoslista;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
-import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,7 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class reseptinNaytto extends AppCompatActivity {
+public class JaettuReseptinNaytto extends AppCompatActivity {
 
 
     ArrayList<String> raaka_aineet = null;
@@ -38,6 +37,7 @@ public class reseptinNaytto extends AppCompatActivity {
     ListView lv = null;
 
     String kayttaja_id = FirebaseAuth.getInstance().getCurrentUser().getUid(); //User-id talteen
+    String jakajan_id;
 
     FirebaseDatabase database;
     DatabaseReference myRef;
@@ -53,7 +53,8 @@ public class reseptinNaytto extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         String  ruokaLaji = bundle.getString("key");
-        reseptinNaytto.this.setTitle(ruokaLaji + getString(R.string.ainekset_aineslista)); //Asetetaan toolbarin titteli vastaamaan kyseistä ruokalajia
+        jakajan_id = bundle.getString("key2");
+        JaettuReseptinNaytto.this.setTitle(ruokaLaji + getString(R.string.ainekset_aineslista)); //Asetetaan toolbarin titteli vastaamaan kyseistä ruokalajia
 
         raaka_aineet = new ArrayList<>();
         Collections.addAll(raaka_aineet); //Lisää kokonaisen setin tarvittaessa.
@@ -64,7 +65,7 @@ public class reseptinNaytto extends AppCompatActivity {
 
 
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("Users/" + kayttaja_id + "/lista" + "/reseptit/"+ruokaLaji);
+        myRef = database.getReference("Users/" + jakajan_id + "/lista" + "/reseptit/"+ruokaLaji);
 
         myRef.addChildEventListener(new ChildEventListener() {
             @Override
@@ -132,7 +133,7 @@ public class reseptinNaytto extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_ohje){
-            AlertDialog alertDialog = new AlertDialog.Builder(reseptinNaytto.this).create();
+            AlertDialog alertDialog = new AlertDialog.Builder(JaettuReseptinNaytto.this).create();
             alertDialog.setTitle(getString(R.string.ohje));
             alertDialog.setMessage(getString(R.string.ohje_aineslista));
             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
@@ -153,12 +154,12 @@ public class reseptinNaytto extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
-                        Intent intent1 = getIntent(); //Tuodaan dataa edellisestä activitystä (Ruokalajin nimi)
-                        Bundle bundle1 = intent1.getExtras();
-                        String resepti = bundle1.getString("key");
+                    Intent intent1 = getIntent(); //Tuodaan dataa edellisestä activitystä (Ruokalajin nimi)
+                    Bundle bundle1 = intent1.getExtras();
+                    String resepti = bundle1.getString("key");
 
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("Users/" + kayttaja_id + "/lista" + "/reseptit/" + resepti); //HUOM. oikean polun määritys
+                    DatabaseReference myRef = database.getReference("Users/" + jakajan_id + "/lista" + "/reseptit/" + resepti); //HUOM. oikean polun määritys
                     String key = input.getText().toString();
 
                     if(key.equals("")){

@@ -15,12 +15,18 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 public class RegisterActivity extends AppCompatActivity {
-    EditText email_input,password_input;
+    EditText email_input,password_input, kayttaja_input;
     Button registerButton,loginButton;
     FirebaseAuth firebaseAuth;
+    FirebaseDatabase database;
+    DatabaseReference nimiRef,publicRef;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +36,7 @@ public class RegisterActivity extends AppCompatActivity {
         password_input = (EditText) findViewById(R.id.password);
         registerButton = (Button) findViewById(R.id.new_user_button);
         loginButton = (Button) findViewById(R.id.login_button);
+        kayttaja_input = (EditText) findViewById(R.id.kayttaja_nimi);
 
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -38,17 +45,23 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String email = email_input.getText().toString();
                 String password = password_input.getText().toString();
+                final String kayttajaNimi = kayttaja_input.getText().toString();
+
+
+                if(TextUtils.isEmpty(kayttajaNimi)){
+                    Toast.makeText(getApplicationContext(),"Lisää käyttäjänimi",Toast.LENGTH_SHORT).show();
+                }
 
                 if(TextUtils.isEmpty(email)){
-                    Toast.makeText(getApplicationContext(),"Please fill in the required fields",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"Sähköposti on pakollinen",Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(TextUtils.isEmpty(password)){
-                    Toast.makeText(getApplicationContext(),"Please fill in the required fields",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"Salasana on pakollinen",Toast.LENGTH_SHORT).show();
                 }
 
                 if(password.length()<6){
-                    Toast.makeText(getApplicationContext(),"Password must be at least 6 characters",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"Salasanan tulee olla vähintään 6 merkkiä pitkä",Toast.LENGTH_SHORT).show();
                 }
 
                 firebaseAuth.createUserWithEmailAndPassword(email,password)
@@ -56,11 +69,22 @@ public class RegisterActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if(task.isSuccessful()){
-                                    startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                                    String kayttaja_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                    String kayttaja_email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                                    database = FirebaseDatabase.getInstance();
+                                    nimiRef = database.getReference("Users/" + kayttaja_id); //Luodaan tietokantapolku nimen asettamista varten
+                                    publicRef = database.getReference("Users/");
+                                    nimiRef.child("/nimi").setValue(kayttajaNimi);
+                                    nimiRef.child("/id").setValue(kayttaja_id);
+                                    nimiRef.child("/email").setValue(kayttaja_email);
+                                    publicRef.child("emailToUid").child(kayttaja_email.replace(".", ",")).setValue(kayttaja_id);
+
+                                    Intent mene = new Intent(getApplicationContext(), MainActivity.class);
+                                    startActivity(mene);
                                     finish();
                                 }
                                 else{
-                                    Toast.makeText(getApplicationContext(),"E-mail or password is wrong",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(),"Sähköposti tai salasana virheellinen!",Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });

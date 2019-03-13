@@ -1,32 +1,25 @@
 package com.example.jukka.javaostoslista;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-
-import java.util.ArrayList;
-import java.util.Collections;
-
-import java.util.HashSet;
-import java.util.Set;
-import android.app.AlertDialog;
-import android.widget.EditText;
-import android.content.DialogInterface;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.app.Activity;
-
-import android.widget.Toast;
+import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -36,22 +29,28 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
+public class JaettuActivity extends AppCompatActivity {
 
     ArrayList<String> shoppingList = null;
     ArrayAdapter<String> adapter = null;
     ListView lvMain = null;
     private static MainActivity instance;
-    boolean onkoJaettu = false; //Koitetaan vaihtaa listanäkymä tätä manipuloimalla jotta jaettu lista näkyy kaikilla jakajilla, eikä vain perustajalla
+
 
     String kayttaja_id = FirebaseAuth.getInstance().getCurrentUser().getUid(); //Otetaan user-id talteen
     String kayttaja_email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-    //String jakajan_id;
+    String jakajan_id;
+
+
 
     FirebaseDatabase database;
     DatabaseReference myRef;
-    DatabaseReference nimiRef, kaveriRef, jakoRef, kayttajanIdHakuRef;
+    DatabaseReference nimiRef, jaettuRef, jakoRef, kayttajanIdHakuRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,15 +60,68 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //Tuodaan mainactivitystä käyttäjän antama email ja id, jonka kanssa halutaan jakaa lista.
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        String  jako_sposti = bundle.getString("key");
+        jakajan_id = bundle.getString("key2");
+
+
+
+
 
         //Luodaan viittaus tietokantaan (polkuun /ostos) johon voidaan tämän luokan kautta lisätä tuotteita (Näkyy oikeassa listanäkymässä, eli varsinaisella ostoslistalla, ei mene esim. reseptilistaan)
         String kayttaja_email = FirebaseAuth.getInstance().getCurrentUser().getEmail(); //Otetaan nykyisen käyttäjän s.posti talteen ja kuunnellaan jos joku lisää sen listalleen (haluaa jakaa hänen kanssaan)
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("Users/" + kayttaja_id  + "/lista" + "/ostos"); // TESTATAAN JOSKO MENISI JOKAISEN KÄYTTÄJÄN OMAAN POLKUUN
         nimiRef = database.getReference("Users/" +  kayttaja_id + "lista/");
-
+        jakoRef = database.getReference("Users/" + jakajan_id  + "/lista" + "/ostos");
         kayttajanIdHakuRef = database.getReference("Users/emailToUid");
 
+/////
+
+
+                JaettuActivity.this.setTitle("Jaettu lista!");
+                jakoRef.addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                        String value = dataSnapshot.getValue(String.class); //Poimitaan valittu tuote
+
+                        shoppingList.add(value); //Lisätään uusi tuote ostoslistaan
+                        adapter.notifyDataSetChanged(); //Ilmoitetaan adapterille että on tapahtunut muutos listassa
+                        Collections.sort(shoppingList); //Järjestetään lista uusiksi päivitettynä
+                        lvMain.setAdapter(adapter); //Näytetään päivitetty lista
+
+
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                        //Kun tuote poistetaan, tämä metodi poistaa tuotteen listanäkymästä
+                        String value = dataSnapshot.getValue(String.class);
+                        shoppingList.remove(value); //Poistetaan näkyvältä ostoslistalta valittu tuote
+                        adapter.notifyDataSetChanged(); //Ilmoitetaan lista-adapterille että on tapahtunut muutos
+                        Collections.sort(shoppingList); //Järjestetään lista uusiksi päivitettynä
+                        lvMain.setAdapter(adapter); // Näytetään päivitetty lista
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
 
 
@@ -77,50 +129,14 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-            //Luodaan kuuntelija tietokantaan, jotta ohjelma osaa päivittää itsensä muutoksien tapahtuessa
-            myRef.addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                    String value = dataSnapshot.getValue(String.class); //Poimitaan valittu tuote
-
-                    shoppingList.add(value); //Lisätään uusi tuote ostoslistaan
-                    adapter.notifyDataSetChanged(); //Ilmoitetaan adapterille että on tapahtunut muutos listassa
-                    Collections.sort(shoppingList); //Järjestetään lista uusiksi päivitettynä
-                    lvMain.setAdapter(adapter); //Näytetään päivitetty lista
 
 
-                }
 
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                }
 
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                    //Kun tuote poistetaan, tämä metodi poistaa tuotteen listanäkymästä
-                    String value = dataSnapshot.getValue(String.class);
-                    shoppingList.remove(value); //Poistetaan näkyvältä ostoslistalta valittu tuote
-                    adapter.notifyDataSetChanged(); //Ilmoitetaan lista-adapterille että on tapahtunut muutos
-                    Collections.sort(shoppingList); //Järjestetään lista uusiksi päivitettynä
-                    lvMain.setAdapter(adapter); // Näytetään päivitetty lista
 
-                }
-
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 
 
@@ -144,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-           // lvMain.setBackgroundColor(Color.LTGRAY); Saa vaihdettua listan taustavärin
+        // lvMain.setBackgroundColor(Color.LTGRAY); Saa vaihdettua listan taustavärin
 
 
 
@@ -162,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         //Jos valitaan "ohje", suoritetaan seuraavat toiminnot:
         if (id == R.id.action_ohje) {
-            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create(); //Avataan pikku-ikkuna
+            AlertDialog alertDialog = new AlertDialog.Builder(JaettuActivity.this).create(); //Avataan pikku-ikkuna
             alertDialog.setTitle(getString(R.string.ohje)); //Titteli ikkunalle
             alertDialog.setMessage(getString(R.string.ohjeet_main)); //Asetetaan viesti
             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", //Luodaan "kuittaus"-nappi...
@@ -188,13 +204,13 @@ public class MainActivity extends AppCompatActivity {
                     DatabaseReference myRef = database.getReference();
 
 
-                        String key = input.getText().toString(); //Poimitaan text-inputista String
+                    String key = input.getText().toString(); //Poimitaan text-inputista String
                     if(key.equals(null) || key.equals("")) { //Tsekataan ettei ole tyhjä input (kaatuu muuten)
                         Toast.makeText(getApplicationContext(),getString(R.string.pakkolisata), Toast.LENGTH_LONG).show();
                     } else {
                         key = key.substring(0, 1).toUpperCase() + key.substring(1).toLowerCase(); //Asetetaan annettu String alkavaksi isolla alkukirjaimella (Listan siisteys)
 
-                        myRef.child("Users/" + kayttaja_id + "/lista" + "/ostos").child(key).setValue(key); //Sijoitetaan annettu input tietokantaan polkuun: /ostos/input
+                        myRef.child("Users/" + jakajan_id + "/lista" + "/ostos").child(key).setValue(key); //Sijoitetaan annettu input tietokantaan polkuun: /ostos/input
                     }
 
                 }
@@ -231,73 +247,19 @@ public class MainActivity extends AppCompatActivity {
 
         if(id == R.id.action_reseptit){ //Jos klikataan valikossa "reseptit"..
 
-            Intent mene = new Intent(MainActivity.this, reseptiLista.class ); //...luodaan intent jolla voidaan avata toinen luokka (reseptilista) jotta saadaan listalle reseptiobjektit
+            Intent mene = new Intent(JaettuActivity.this, JaetutReseptitActivity.class ); //...luodaan intent jolla voidaan avata toinen luokka (reseptilista) jotta saadaan listalle reseptiobjektit
+            mene.putExtra("key", jakajan_id);
             startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
 
         }
 
-        if(id == R.id.action_jaa){
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(getString(R.string.jaa_lista));
-            final EditText input = new EditText(this);
-            builder.setMessage("Anna henkilön sähköposti, jolle jaetaan:");
-            builder.setView(input);
-            builder.setPositiveButton("JAA", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
 
-                    final String jako_sposti = input.getText().toString().trim();
-                   //imiRef.child("/jasenet").child("/toinen").setValue(jako_sposti);
-                   //imiRef.child("/jasenet").child("/admin").setValue(kayttaja_email);
-                    final String jako_sposti2 = jako_sposti.replace(".",",");
-                    kayttajanIdHakuRef.child(jako_sposti2).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot snapshot) {
-                            String jakajan_id = (String) snapshot.getValue();
-                            Toast.makeText(MainActivity.this, jakajan_id, Toast.LENGTH_LONG).show();
-                            jakoRef = database.getReference("Users/" + jakajan_id + "/lista" + "/ostos");
-                            kaveriRef = database.getReference("Users/" + jakajan_id + "/lista" + "/kaveri");
-                            kaveriRef.child(kayttaja_id).setValue(kayttaja_id);
-
-                            Intent mene = new Intent(MainActivity.this, JaettuActivity.class ); //...luodaan intent jolla voidaan avata toinen luokka (reseptilista) jotta saadaan listalle reseptiobjektit
-                            mene.putExtra("key", jako_sposti2);
-                            mene.putExtra("key2", jakajan_id);
-                            startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-
-
-                   //
-                    Intent mene = new Intent(MainActivity.this, JaettuActivity.class ); //...luodaan intent jolla voidaan avata toinen luokka (reseptilista) jotta saadaan listalle reseptiobjektit
-                    mene.putExtra("key", jako_sposti2);
-                    startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
-                    //
-
-
-                }
-
-            });
-            builder.setNegativeButton(getString(R.string.peruuta), new DialogInterface.OnClickListener() { //Voidaan peruuttaa input
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                    dialog.cancel(); //Suljetaan input-ikkuna jos klikataan "Peruuta"
-                }
-            });
-            builder.show();
-            return true;
-        }
         return super.onOptionsItemSelected(item);
     }
 
     public static ArrayList getArrayVal( Context dan) //Listan sisällön luonti, tämä metodi hieman hämärän peitossa itsellä
     {
-        SharedPreferences WordSearchGetPrefs = dan.getSharedPreferences("dbArrayValues",Activity.MODE_PRIVATE);
+        SharedPreferences WordSearchGetPrefs = dan.getSharedPreferences("dbArrayValues", Activity.MODE_PRIVATE);
         Set<String> tempSet = new HashSet<String>();
         tempSet = WordSearchGetPrefs.getStringSet("myArray", tempSet);
         return new ArrayList<String>(tempSet);

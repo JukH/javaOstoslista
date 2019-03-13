@@ -3,10 +3,10 @@ package com.example.jukka.javaostoslista;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,11 +30,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Collections;
 
-
 import static com.example.jukka.javaostoslista.MainActivity.getArrayVal;
 
-
-public class reseptiLista extends AppCompatActivity {
+public class JaetutReseptitActivity extends AppCompatActivity {
 
 
     ArrayList<String> reseptit = null;
@@ -42,6 +40,7 @@ public class reseptiLista extends AppCompatActivity {
     ListView lv = null;
 
     String kayttaja_id = FirebaseAuth.getInstance().getCurrentUser().getUid(); //User-id talteen
+    String jakajan_id;
 
 
     FirebaseDatabase database;
@@ -57,11 +56,15 @@ public class reseptiLista extends AppCompatActivity {
         setContentView(R.layout.activity_resepti_lista);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        reseptiLista.this.setTitle(getString(R.string.resepti_titteli));
+        JaetutReseptitActivity.this.setTitle(getString(R.string.resepti_titteli));
+
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        jakajan_id = bundle.getString("key");
 
 
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("Users/" + kayttaja_id + "/lista" + "/reseptit"); //HUOM. viittaus eri polkuun tietokannassa
+        myRef = database.getReference("Users/" + jakajan_id + "/lista" + "/reseptit"); //HUOM. viittaus eri polkuun tietokannassa
 
         myRef.addChildEventListener(new ChildEventListener() {
             @Override
@@ -74,8 +77,8 @@ public class reseptiLista extends AppCompatActivity {
                     adapter.notifyDataSetChanged();
                     Collections.sort(reseptit);
                     lv.setAdapter(adapter);
-                } catch (Exception e){
-                    Toast.makeText(reseptiLista.this, getString(R.string.virhe), Toast.LENGTH_LONG).show();
+                } catch (Exception e) {
+                    Toast.makeText(JaetutReseptitActivity.this, getString(R.string.virhe), Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -119,20 +122,17 @@ public class reseptiLista extends AppCompatActivity {
                 if (selectedItem.trim().equals(reseptit.get(position).trim())) {
                     removeElement(selectedItem, position);
                 } else {
-                    Toast.makeText(getApplicationContext(),getString(R.string.virhe), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.virhe), Toast.LENGTH_LONG).show();
                 }
             }
         });
     }
 
 
-
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater=getMenuInflater();
-        inflater.inflate(R.menu.menu_reseptilista,menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_reseptilista, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -141,8 +141,8 @@ public class reseptiLista extends AppCompatActivity {
 
         int id = item.getItemId();
 
-        if(id == R.id.action_ohje){
-            AlertDialog alertDialog = new AlertDialog.Builder(reseptiLista.this).create();
+        if (id == R.id.action_ohje) {
+            AlertDialog alertDialog = new AlertDialog.Builder(JaetutReseptitActivity.this).create();
             alertDialog.setTitle(getString(R.string.ohje));
             alertDialog.setMessage(getString(R.string.ohjeet_resepti));
             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
@@ -154,7 +154,7 @@ public class reseptiLista extends AppCompatActivity {
             alertDialog.show();
         }
 
-        if(id == R.id.action_reseptiOpetus){
+        if (id == R.id.action_reseptiOpetus) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(getString(R.string.nimea_resepti));
             final EditText input = new EditText(this);
@@ -170,22 +170,20 @@ public class reseptiLista extends AppCompatActivity {
                     String key = input.getText().toString();
 
 
+                    if (key.equals(null) || key.equals("")) {
+                        Toast.makeText(getApplicationContext(), getString(R.string.pakkolisata), Toast.LENGTH_LONG).show();
+                    } else {
 
+                        key = key.substring(0, 1).toUpperCase() + key.substring(1).toLowerCase();
+                        myRef.child("Users/" + jakajan_id + "/lista" + "/reseptit").child(key).setValue(key); // 2.2.2019 Menee oikeaan osoitteeseen, nyt vielä reseptit omiin lokereoihin.
 
+                        String pushId = myRef.getKey();
 
-                        if(key.equals(null) || key.equals("")){
-                            Toast.makeText(getApplicationContext(),getString(R.string.pakkolisata), Toast.LENGTH_LONG).show();
-                        } else {
-
-                            key = key.substring(0, 1).toUpperCase() + key.substring(1).toLowerCase();
-                            myRef.child("Users/" + kayttaja_id + "/lista"+"/reseptit").child(key).setValue(key); // 2.2.2019 Menee oikeaan osoitteeseen, nyt vielä reseptit omiin lokereoihin.
-
-                            String pushId = myRef.getKey();
-
-                            Intent mene = new Intent(reseptiLista.this, reseptinNaytto.class); //2.2.2019 avataan toinen luokka jotta saadaan listalle reseptiobjektit
-                            mene.putExtra("key", key);
-                            startActivity(mene);
-                        }
+                        Intent mene = new Intent(JaetutReseptitActivity.this, JaettuReseptinNaytto.class); //2.2.2019 avataan toinen luokka jotta saadaan listalle reseptiobjektit
+                        mene.putExtra("key", key);
+                        mene.putExtra("key2", jakajan_id);
+                        startActivity(mene);
+                    }
 
 
                 }
@@ -202,13 +200,11 @@ public class reseptiLista extends AppCompatActivity {
         }
 
 
-
-
         return super.onOptionsItemSelected(item);
     }
 
 
-    public void removeElement(final String selectedItem, final int position){ //Nimestä huolimatta tämä metodi hoitaa ostoksien lisäämisen resepti-listalta ostoslistalle
+    public void removeElement(final String selectedItem, final int position) { //Nimestä huolimatta tämä metodi hoitaa ostoksien lisäämisen resepti-listalta ostoslistalle
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(selectedItem);
         builder.setPositiveButton(getString(R.string.poista_), new DialogInterface.OnClickListener() {
@@ -216,7 +212,7 @@ public class reseptiLista extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
 
 
-                String listaTeksti =(lv.getItemAtPosition(position).toString());
+                String listaTeksti = (lv.getItemAtPosition(position).toString());
                 myRef.child(listaTeksti).removeValue();
 
                 reseptit.remove(position);
@@ -227,8 +223,6 @@ public class reseptiLista extends AppCompatActivity {
                 lv.setAdapter(adapter);
 
 
-
-
             }
         });
 
@@ -236,55 +230,40 @@ public class reseptiLista extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                                                                                ////////////////////////////////////////////////////////////////////////////
-                myRefReseptinHaku = database.getInstance().getReference("Users/" +  kayttaja_id + "/lista" +"/reseptit/"+selectedItem);
+                ////////////////////////////////////////////////////////////////////////////
+                myRefReseptinHaku = database.getInstance().getReference("Users/" + jakajan_id + "/lista" + "/reseptit/" + selectedItem);
                 myRefResepti = database.getReference();
-                myRefOstosLista = database.getReference("Users/" + kayttaja_id +  "/lista" +"ostos");
+                myRefOstosLista = database.getReference("Users/" + jakajan_id + "/lista" + "ostos");
 
 
+                myRefReseptinHaku.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
 
+                        for (DataSnapshot ds1 : dataSnapshot.getChildren()) {
 
 
-                        myRefReseptinHaku.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                String value = ds.getKey();
 
 
-                                for(DataSnapshot ds1 : dataSnapshot.getChildren()) {
-
-
-
-
-
-                                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                                        String value = ds.getKey();
-
-
-
-                                            myRefResepti.child("Users/" + kayttaja_id + "/lista" + "/ostos").child(value + " (" + selectedItem + ")").setValue(value + " (" + selectedItem + ")");  //Lisätään reseptin sisältämät tuotteet ostoslistalle ja liitetään perään reseptin nimi
-
-                                        }
-                                }
-
-
+                                myRefResepti.child("Users/" + jakajan_id + "/lista" + "/ostos").child(value + " (" + selectedItem + ")").setValue(value + " (" + selectedItem + ")");  //Lisätään reseptin sisältämät tuotteet ostoslistalle ja liitetään perään reseptin nimi
 
                             }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
+                        }
 
 
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
 
-
-
-                Toast.makeText(reseptiLista.this, selectedItem + getString(R.string.lisatty_listalle), Toast.LENGTH_SHORT).show();
-
-
+                Toast.makeText(JaetutReseptitActivity.this, selectedItem + getString(R.string.lisatty_listalle), Toast.LENGTH_SHORT).show();
 
 
             }
@@ -293,8 +272,9 @@ public class reseptiLista extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                Intent mene = new Intent(reseptiLista.this, reseptinNaytto.class ); //2.2.2019 avataan toinen luokka jotta saadaan listalle reseptiobjektit
+                Intent mene = new Intent(JaetutReseptitActivity.this, JaettuReseptinNaytto.class); //2.2.2019 avataan toinen luokka jotta saadaan listalle reseptiobjektit
                 mene.putExtra("key", selectedItem);
+                mene.putExtra("key2", jakajan_id);
                 startActivity(mene);
 
             }
