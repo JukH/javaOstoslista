@@ -15,20 +15,14 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_liity_listalle"
+        android:id="@+id/action_poistu_jaosta"
         android:orderInCategory="300"
-        android:title="@string/action_liity_listalle"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_siirry_jaetulle_listalle"
-        android:orderInCategory="400"
-        android:title="@string/action_siirry_jaetulle_listalle"
+        android:title="@string/action_poistu_jaosta"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_clear"
-        android:orderInCategory="500"
+        android:orderInCategory="300"
         android:title="@string/action_clear"
         app:showAsAction="never" />
 
@@ -38,3 +32,7 @@
         android:title="@string/action_add"
         app:showAsAction="ifRoom" />
 </menu>
+
+
+
+

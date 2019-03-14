@@ -48,7 +48,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MainActivity"
-            android:label="@string/versio"
+            android:label="Oma ostoslista"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 

@@ -44,13 +44,13 @@ public class JaettuActivity extends AppCompatActivity {
 
     String kayttaja_id = FirebaseAuth.getInstance().getCurrentUser().getUid(); //Otetaan user-id talteen
     String kayttaja_email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-    String jakajan_id;
+    String jakajan_id,jasenen_nimi;
 
 
 
     FirebaseDatabase database;
     DatabaseReference myRef;
-    DatabaseReference nimiRef, jaettuRef, jakoRef, kayttajanIdHakuRef;
+    DatabaseReference nimiRef, poistuRef, jakoRef, kayttajanIdHakuRef, onkoJaettuRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +63,7 @@ public class JaettuActivity extends AppCompatActivity {
         //Tuodaan mainactivitystä käyttäjän antama email ja id, jonka kanssa halutaan jakaa lista.
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        String  jako_sposti = bundle.getString("key");
+        jasenen_nimi = bundle.getString("key3");
         jakajan_id = bundle.getString("key2");
 
 
@@ -73,15 +73,18 @@ public class JaettuActivity extends AppCompatActivity {
         //Luodaan viittaus tietokantaan (polkuun /ostos) johon voidaan tämän luokan kautta lisätä tuotteita (Näkyy oikeassa listanäkymässä, eli varsinaisella ostoslistalla, ei mene esim. reseptilistaan)
         String kayttaja_email = FirebaseAuth.getInstance().getCurrentUser().getEmail(); //Otetaan nykyisen käyttäjän s.posti talteen ja kuunnellaan jos joku lisää sen listalleen (haluaa jakaa hänen kanssaan)
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("Users/" + kayttaja_id  + "/lista" + "/ostos"); // TESTATAAN JOSKO MENISI JOKAISEN KÄYTTÄJÄN OMAAN POLKUUN
-        nimiRef = database.getReference("Users/" +  kayttaja_id + "lista/");
+        myRef = database.getReference("Users/" + jakajan_id + "/lista" + "/ostos"); // TESTATAAN JOSKO MENISI JOKAISEN KÄYTTÄJÄN OMAAN POLKUUN
+        nimiRef = database.getReference("Users/" +  jakajan_id + "lista/");
         jakoRef = database.getReference("Users/" + jakajan_id  + "/lista" + "/ostos");
+        poistuRef = database.getReference("Users/" + jakajan_id + "/lista" + "/kaveri");
         kayttajanIdHakuRef = database.getReference("Users/emailToUid");
 
 /////
 
 
-                JaettuActivity.this.setTitle("Jaettu lista!");
+                JaettuActivity.this.setTitle("Olet jaetulla listalla");
+
+
                 jakoRef.addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -168,7 +171,7 @@ public class JaettuActivity extends AppCompatActivity {
     //Asetetaan menu näkyväksi
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_jaettu_activity, menu);
         return true;
     }
     //Asetetaan kuuntelijat valikko-itemeiden käyttöä varten
@@ -233,6 +236,33 @@ public class JaettuActivity extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) { //Jos klikataan "Tyhjennä"
                     myRef.setValue(null); //Tyhjennetään annettu tietokantapolku (myref = /ostos), eli kaikki ostokset poistuvat listalta
+                }
+            });
+            builder.setNegativeButton(getString(R.string.peruuta), new DialogInterface.OnClickListener() { //Peruutus-nappi
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel(); //Klikatessa "Peruuta"-nappia, suljetaan ikkuna
+                }
+            });
+            builder.show();
+            return true;
+        }
+
+        if(id == R.id.action_poistu_jaosta){ //Annetaan keino poistua jaetulta listalta takaisin yksityiseen listaan.
+            AlertDialog.Builder builder = new AlertDialog.Builder(this); //..avataan dialogi-ikkuna
+            builder.setTitle(getString(R.string.haluatko_poistua)); //Asetetaan viesti ikkunaan
+            builder.setPositiveButton(getString(R.string.poistu), new DialogInterface.OnClickListener() { //Asetetaan poistumisnappi
+                @Override
+                public void onClick(DialogInterface dialog, int which) { //Jos klikataan poistu, siirrytään main-activityyn
+                    poistuRef.child(jasenen_nimi).setValue(null);
+                    poistuRef.child(kayttaja_id).setValue(null);
+                    onkoJaettuRef = database.getReference("Users/" + kayttaja_id + "/Jako" + "/jakaja");
+
+                    onkoJaettuRef.setValue(null);
+                    Intent mene = new Intent(JaettuActivity.this, MainActivity.class);
+                    startActivity(mene);
+
+
                 }
             });
             builder.setNegativeButton(getString(R.string.peruuta), new DialogInterface.OnClickListener() { //Peruutus-nappi

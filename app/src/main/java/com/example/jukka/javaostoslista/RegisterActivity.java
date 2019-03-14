@@ -80,6 +80,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     publicRef.child("emailToUid").child(kayttaja_email.replace(".", ",")).setValue(kayttaja_id);
 
                                     Intent mene = new Intent(getApplicationContext(), MainActivity.class);
+                                    mene.putExtra("key", kayttajaNimi);
                                     startActivity(mene);
                                     finish();
                                 }
