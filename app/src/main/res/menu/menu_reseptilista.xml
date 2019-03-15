@@ -8,11 +8,11 @@
         android:title="@string/action_ohje"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/action_reseptiOpetus"
-        android:orderInCategory="200"
-        android:title="@string/lisaa_resepti_menu"
-        app:showAsAction="never" />
+
+    <item android:id="@+id/action_reseptiOpetus"
+        android:icon="@drawable/baseline_add_circle_outline_white_48dp"
+        android:title="@string/action_add"
+        app:showAsAction="ifRoom" />
 
 
 </menu>

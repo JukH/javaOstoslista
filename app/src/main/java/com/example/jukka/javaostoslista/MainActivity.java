@@ -41,20 +41,24 @@ public class MainActivity extends AppCompatActivity {
 
 
     ArrayList<String> shoppingList = null;
+    ArrayList<String> jaettuLista = null;
     ArrayAdapter<String> adapter = null;
     ListView lvMain = null;
+    ListView LvJaettu = null;
+
     private static MainActivity instance;
     boolean onkoJaettu = false; //Koitetaan vaihtaa listanäkymä tätä manipuloimalla jotta jaettu lista näkyy kaikilla jakajilla, eikä vain perustajalla
 
     String kayttaja_id = FirebaseAuth.getInstance().getCurrentUser().getUid(); //Otetaan user-id talteen
     String kayttaja_email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+    String jakajan_id;
 
     String kayttajaNimi;
     String jako_sposti;
 
     FirebaseDatabase database;
     DatabaseReference myRef;
-    DatabaseReference nimiRef, kaveriRef, jakoRef, kayttajanIdHakuRef, uusiJasenRef, omanNimenRef, onkoJaettuRef;
+    DatabaseReference nimiRef,jaettuListaRef ,kaveriRef, jakoRef, kayttajanIdHakuRef, uusiJasenRef, omanNimenRef, onkoJaettuRef, poistuRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,18 +85,60 @@ public class MainActivity extends AppCompatActivity {
         kayttajanIdHakuRef = database.getReference("Users/emailToUid");
         omanNimenRef = database.getReference("Users/" + kayttaja_id + "/nimi");
 
-        //Tarkastetaan välittömästi kuuluuko käyttäjä jaetulle listalle. Jos kuuluu, avataan suoraan jaettu lista.
+
+
         onkoJaettuRef = database.getReference("Users/" + kayttaja_id + "/Jako" + "/jakaja");
 
-
-       /* onkoJaettuRef.addValueEventListener(new ValueEventListener() {
+        //Tarkastetaan välittömästi kuuluuko käyttäjä jaetulle listalle. Jos kuuluu, populoidaan lista jakajan ostoslistaitemeillä.
+       onkoJaettuRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String value = dataSnapshot.getValue(String.class);
                 if(value != null){
-                    Intent siirryJaetulle = new Intent(MainActivity.this, JaettuActivity.class);
-                    siirryJaetulle.putExtra("key3", kayttajaNimi);
-                    startActivity(siirryJaetulle);
+                    String jakajan_id = (String) dataSnapshot.getValue();
+                    MainActivity.this.setTitle("Jaettu ostoslista");
+                    jaettuListaRef = database.getReference("Users/" + jakajan_id + "/lista" + "/ostos");
+                    jaettuListaRef.addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                            String value = dataSnapshot.getValue(String.class); //Poimitaan valittu tuote
+
+                            shoppingList.add(value); //Lisätään uusi tuote ostoslistaan
+                            adapter.notifyDataSetChanged(); //Ilmoitetaan adapterille että on tapahtunut muutos listassa
+                            Collections.sort(shoppingList); //Järjestetään lista uusiksi päivitettynä
+                            lvMain.setAdapter(adapter); //Näytetään päivitetty lista
+
+
+                        }
+
+                        @Override
+                        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                        }
+
+                        @Override
+                        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                            //Kun tuote poistetaan, tämä metodi poistaa tuotteen listanäkymästä
+                            String value = dataSnapshot.getValue(String.class);
+                            shoppingList.remove(value); //Poistetaan näkyvältä ostoslistalta valittu tuote
+                            adapter.notifyDataSetChanged(); //Ilmoitetaan lista-adapterille että on tapahtunut muutos
+                            Collections.sort(shoppingList); //Järjestetään lista uusiksi päivitettynä
+                            lvMain.setAdapter(adapter); // Näytetään päivitetty lista
+
+                        }
+
+                        @Override
+                        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
                 }
             }
 
@@ -100,8 +146,8 @@ public class MainActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        }); */
-
+        });
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         //Haetaan oma nimi
         omanNimenRef.addValueEventListener(new ValueEventListener() {
@@ -253,20 +299,24 @@ public class MainActivity extends AppCompatActivity {
             alertDialog.show(); //Asetetaan viesti-ikkuna näkyväksi
         }
 
-        if (id == R.id.action_siirry_jaetulle_listalle) {
+        /*if (id == R.id.action_siirry_jaetulle_listalle) {
 
 
             onkoJaettuRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     String value = dataSnapshot.getValue(String.class);
-                    if(value == null){
+                    if (value == null) {
                         Toast.makeText(MainActivity.this, "Et ole liittyneenä kenenkään listaan.", Toast.LENGTH_SHORT).show();
                     } else {
+
+
                         Intent mene = new Intent(MainActivity.this, JaettuActivity.class); //...luodaan intent jolla voidaan avata toinen luokka jaettuActivity jotta nähdään yhteinen lista
                         //mene.putExtra("key", jako_sposti2);
                         mene.putExtra("key2", value); //Jakajan id
                         mene.putExtra("key3", kayttajaNimi);
+
+
                         startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
                     }
                 }
@@ -276,6 +326,57 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             });
+        }*/
+
+            if(id == R.id.action_poistu_jaosta){ //Annetaan keino poistua jaetulta listalta takaisin yksityiseen listaan.
+                AlertDialog.Builder builder = new AlertDialog.Builder(this); //..avataan dialogi-ikkuna
+                builder.setTitle(getString(R.string.haluatko_poistua)); //Asetetaan viesti ikkunaan
+                builder.setPositiveButton(getString(R.string.poistu), new DialogInterface.OnClickListener() { //Asetetaan poistumisnappi
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) { //Jos klikataan poistu, siirrytään main-activityyn
+                        onkoJaettuRef.addValueEventListener(new ValueEventListener() {
+                                                                @Override
+                                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                                    String value = dataSnapshot.getValue(String.class);
+                                                                    if(value != null) {
+                                                                        String jakajan_id = (String) dataSnapshot.getValue();
+
+                                                                        poistuRef = database.getReference("Users/" + jakajan_id + "/lista" + "/kaveri");
+                                                                        poistuRef.child(kayttajaNimi).setValue(null);
+                                                                        poistuRef.child(kayttaja_id).setValue(null);
+                                                                        onkoJaettuRef = database.getReference("Users/" + kayttaja_id + "/Jako" + "/jakaja");
+
+                                                                        onkoJaettuRef.setValue(null);
+                                                                        Intent mene = new Intent(MainActivity.this, MainActivity.class);
+                                                                        startActivity(mene);
+
+
+                                                                    }
+
+                                                                    else {
+                                                                        Toast.makeText(MainActivity.this, "Et kuulu kenenkään listalle", Toast.LENGTH_SHORT).show();
+                                                                    }
+                                                                }
+
+                                                                @Override
+                                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                                }
+                                                            });
+
+
+
+                    }
+                });
+                builder.setNegativeButton(getString(R.string.peruuta), new DialogInterface.OnClickListener() { //Peruutus-nappi
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel(); //Klikatessa "Peruuta"-nappia, suljetaan ikkuna
+                    }
+                });
+                builder.show();
+                return true;
+            }
             
             onkoJaettuRef.addChildEventListener(new ChildEventListener() {
                 @Override
@@ -303,7 +404,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             });
-        }
+
 
         if(id == R.id.lisääOstos) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -314,19 +415,45 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
-                    //Otetaan yhteys tietokantaan
+                    /*/Otetaan yhteys tietokantaan
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference();
+                    DatabaseReference myRef = database.getReference(); */
+
+                    onkoJaettuRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            String value = dataSnapshot.getValue(String.class);
+                            if(value != null){
+                                String jakajan_id = (String) dataSnapshot.getValue();
+                                String key = input.getText().toString(); //Poimitaan text-inputista String
+                                if(key.equals(null) || key.equals("")) { //Tsekataan ettei ole tyhjä input (kaatuu muuten)
+                                    Toast.makeText(getApplicationContext(),getString(R.string.pakkolisata), Toast.LENGTH_LONG).show();
+                                } else {
+                                    key = key.substring(0, 1).toUpperCase() + key.substring(1).toLowerCase(); //Asetetaan annettu String alkavaksi isolla alkukirjaimella (Listan siisteys)
+                                    jaettuListaRef = database.getReference("Users/" + jakajan_id + "/lista" + "/ostos");
+                                    jaettuListaRef.child(key + " (" + kayttajaNimi + ")").setValue(key + " (" + kayttajaNimi + ")"); //Sijoitetaan annettu input tietokantaan polkuun: /ostos/input
+                                }
+                            } else {
+                                String key = input.getText().toString(); //Poimitaan text-inputista String
+                                if(key.equals(null) || key.equals("")) { //Tsekataan ettei ole tyhjä input (kaatuu muuten)
+                                    Toast.makeText(getApplicationContext(),getString(R.string.pakkolisata), Toast.LENGTH_LONG).show();
+                                } else {
+                                    key = key.substring(0, 1).toUpperCase() + key.substring(1).toLowerCase(); //Asetetaan annettu String alkavaksi isolla alkukirjaimella (Listan siisteys)
+
+                                    myRef.child(key).setValue(key); //Sijoitetaan annettu input tietokantaan polkuun: /ostos/input
+                                }
+                            }
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
 
 
-                        String key = input.getText().toString(); //Poimitaan text-inputista String
-                    if(key.equals(null) || key.equals("")) { //Tsekataan ettei ole tyhjä input (kaatuu muuten)
-                        Toast.makeText(getApplicationContext(),getString(R.string.pakkolisata), Toast.LENGTH_LONG).show();
-                    } else {
-                        key = key.substring(0, 1).toUpperCase() + key.substring(1).toLowerCase(); //Asetetaan annettu String alkavaksi isolla alkukirjaimella (Listan siisteys)
 
-                        myRef.child("Users/" + kayttaja_id + "/lista" + "/ostos").child(key).setValue(key); //Sijoitetaan annettu input tietokantaan polkuun: /ostos/input
-                    }
 
                 }
             });
@@ -347,7 +474,25 @@ public class MainActivity extends AppCompatActivity {
             builder.setPositiveButton(getString(R.string.tyhjenna), new DialogInterface.OnClickListener() { //Asetetaan tyhjennynappi
                 @Override
                 public void onClick(DialogInterface dialog, int which) { //Jos klikataan "Tyhjennä"
-                    myRef.setValue(null); //Tyhjennetään annettu tietokantapolku (myref = /ostos), eli kaikki ostokset poistuvat listalta
+                    onkoJaettuRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            String value = dataSnapshot.getValue(String.class);
+                            if(value != null) {
+                                String jakajan_id = (String) dataSnapshot.getValue();
+                                jaettuListaRef = database.getReference("Users/" + jakajan_id + "/lista" + "/ostos");
+                                jaettuListaRef.setValue(null); //Tyhjennetään koko JAETTU lista.
+                            } else {
+                                myRef.setValue(null); //Tyhjennetään annettu tietokantapolku (myref = /ostos), eli kaikki ostokset poistuvat listalta
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
                 }
             });
             builder.setNegativeButton(getString(R.string.peruuta), new DialogInterface.OnClickListener() { //Peruutus-nappi
@@ -362,8 +507,31 @@ public class MainActivity extends AppCompatActivity {
 
         if(id == R.id.action_reseptit){ //Jos klikataan valikossa "reseptit"..
 
-            Intent mene = new Intent(MainActivity.this, reseptiLista.class ); //...luodaan intent jolla voidaan avata toinen luokka (reseptilista) jotta saadaan listalle reseptiobjektit
-            startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
+            onkoJaettuRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    String value = dataSnapshot.getValue(String.class);
+                    if(value != null) {
+                        String jakajan_id = (String) dataSnapshot.getValue();
+                        Intent meneResepteihin = new Intent(MainActivity.this, JaetutReseptitActivity.class ); //...luodaan intent jolla voidaan avata toinen luokka (JaettuReseptilista) jotta saadaan listalle reseptiobjektit
+                        meneResepteihin.putExtra("key", jakajan_id);
+                        startActivity(meneResepteihin); //Suoritetaan intent -> avataan reseptiLista-luokka
+                    } else {
+                        Intent mene = new Intent(MainActivity.this, reseptiLista.class ); //...Jos ei jaettu, mennään omalle reseptilistalle
+                        startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
+
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+
+
 
         }
 
@@ -408,11 +576,11 @@ public class MainActivity extends AppCompatActivity {
                                             //kaveriRef.child(kayttaja_id).setValue(kayttaja_id); //Lisätään käyttäjän id kaverilistalle kun hän liittyy jakoon
 
 
-                                            Intent mene = new Intent(MainActivity.this, JaettuActivity.class); //...luodaan intent jolla voidaan avata toinen luokka jaettuActivity jotta nähdään yhteinen lista
+                                           /* Intent mene = new Intent(MainActivity.this, JaettuActivity.class); //...luodaan intent jolla voidaan avata toinen luokka jaettuActivity jotta nähdään yhteinen lista
                                             mene.putExtra("key", jako_sposti2);
                                             mene.putExtra("key2", jakajan_id);
                                             mene.putExtra("key3", kayttajaNimi);
-                                            startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
+                                            startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka */
                                         }
 
                                         @Override
@@ -471,9 +639,27 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton(getString(R.string.poista_), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                onkoJaettuRef.addValueEventListener(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                            String value = dataSnapshot.getValue(String.class);
+                                                            if(value != null) {
+                                                                String jakajan_id = (String) dataSnapshot.getValue();
+                                                                jaettuListaRef = database.getReference("Users/" + jakajan_id + "/lista" + "/ostos");
+                                                                String listaTeksti = (lvMain.getItemAtPosition(position).toString()); //Poimitaan klikatusta lista-itemistä String
+                                                                jaettuListaRef.child(listaTeksti).removeValue(); //Poistetaan JAETULTA listalta item
+                                                            } else {
+                                                                String listaTeksti = (lvMain.getItemAtPosition(position).toString()); //Poimitaan klikatusta lista-itemistä String
+                                                                myRef.child(listaTeksti).removeValue(); //Poistetaan saadun Stringin avulla tietokannasta valittu item, tietokantakuuntelijan kautta päivittyy myös itse listanäkymä
+                                                            }
+                                                        }
 
-                String listaTeksti =(lvMain.getItemAtPosition(position).toString()); //Poimitaan klikatusta lista-itemistä String
-                myRef.child(listaTeksti).removeValue(); //Poistetaan saadun Stringin avulla tietokannasta valittu item, tietokantakuuntelijan kautta päivittyy myös itse listanäkymä
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                        }
+                                                    });
+
             }
         });
         builder.setNegativeButton(getString(R.string.peruuta), new DialogInterface.OnClickListener() { //Peruutusnappi
