@@ -34,12 +34,9 @@
     <string name="lisaa_raaka_aine_reseptiin">Lisää raaka-aine</string>
     <string name="resepti_titteli">Reseptit</string>
     <string name="title_activity_login">Kirjaudu sisään</string>
-    <string name="action_liity_listalle">Liity kaverin listalle</string>
+    <string name="action_jaa">Jaa lista</string>
     <string name="jaa_lista">Jaa tämä lista</string>
-    <string name="action_poistu_jaosta">Poistu jaetulta listalta</string>
-    <string name="haluatko_poistua">Haluatko poistua jaetulta listalta ja palata yksityisen listan käyttöön?</string>
-    <string name="poistu">Poistu</string>
-    <string name="action_siirry_jaetulle_listalle">Näytä jaettu lista</string>
+    <string name="lisää_lista">Lisää uusi lista:</string>
 
     <!-- Strings related to login -->
     <string name="defaultti_web_client_id">32300194624-d3fifudd0hgdjv4puabeus2pci8floc3.apps.googleusercontent.com</string>

@@ -14,7 +14,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".RegisterActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -33,6 +32,9 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".JaettuActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ListaListaActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".JaetutReseptitActivity"

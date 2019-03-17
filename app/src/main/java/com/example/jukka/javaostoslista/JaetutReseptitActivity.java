@@ -40,7 +40,7 @@ public class JaetutReseptitActivity extends AppCompatActivity {
     ListView lv = null;
 
     String kayttaja_id = FirebaseAuth.getInstance().getCurrentUser().getUid(); //User-id talteen
-    String jakajan_id;
+    String jakajan_id, listaTitteli;
 
 
     FirebaseDatabase database;
@@ -61,10 +61,11 @@ public class JaetutReseptitActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         jakajan_id = bundle.getString("key");
+        listaTitteli = bundle.getString("key2");
 
 
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("Users/" + jakajan_id + "/lista" + "/reseptit"); //HUOM. viittaus eri polkuun tietokannassa
+        myRef = database.getReference("Users/" + jakajan_id + "/listat/" + listaTitteli + "/reseptit"); //HUOM. viittaus eri polkuun tietokannassa
 
         myRef.addChildEventListener(new ChildEventListener() {
             @Override
@@ -175,7 +176,7 @@ public class JaetutReseptitActivity extends AppCompatActivity {
                     } else {
 
                         key = key.substring(0, 1).toUpperCase() + key.substring(1).toLowerCase();
-                        myRef.child("Users/" + jakajan_id + "/lista" + "/reseptit").child(key).setValue(key); // 2.2.2019 Menee oikeaan osoitteeseen, nyt vielä reseptit omiin lokereoihin.
+                        myRef.child("Users/" + jakajan_id + "/listat/" + listaTitteli +  "/reseptit").child(key).setValue(key); // 2.2.2019 Menee oikeaan osoitteeseen, nyt vielä reseptit omiin lokereoihin.
 
                         String pushId = myRef.getKey();
 

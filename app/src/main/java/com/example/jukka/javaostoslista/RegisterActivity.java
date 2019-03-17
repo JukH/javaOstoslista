@@ -79,8 +79,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     nimiRef.child("/email").setValue(kayttaja_email);
                                     publicRef.child("emailToUid").child(kayttaja_email.replace(".", ",")).setValue(kayttaja_id);
 
-                                    Intent mene = new Intent(getApplicationContext(), MainActivity.class);
-                                    mene.putExtra("key", kayttajaNimi);
+                                    Intent mene = new Intent(getApplicationContext(), ListaListaActivity.class);
                                     startActivity(mene);
                                     finish();
                                 }
@@ -100,7 +99,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
         if(firebaseAuth.getCurrentUser()!=null){
-            startActivity(new Intent(getApplicationContext(),MainActivity.class));
+            startActivity(new Intent(getApplicationContext(),ListaListaActivity.class));
         }
     }
 }

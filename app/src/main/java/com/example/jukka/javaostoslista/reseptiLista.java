@@ -42,6 +42,7 @@ public class reseptiLista extends AppCompatActivity {
     ListView lv = null;
 
     String kayttaja_id = FirebaseAuth.getInstance().getCurrentUser().getUid(); //User-id talteen
+    String listaTitteli;
 
 
     FirebaseDatabase database;
@@ -59,9 +60,15 @@ public class reseptiLista extends AppCompatActivity {
         setSupportActionBar(toolbar);
         reseptiLista.this.setTitle(getString(R.string.resepti_titteli));
 
+        //Tuodaan Mainactivitystä käytettävän listan nimi
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        listaTitteli = bundle.getString("key"); //Otetaan listan nimi talteen Reffiä varten, jotta saadaan oikeaan polkuun tuotteet
+
+
 
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("Users/" + kayttaja_id + "/lista" + "/reseptit"); //HUOM. viittaus eri polkuun tietokannassa
+        myRef = database.getReference("Users/" + kayttaja_id + "/listat/" + listaTitteli + "/reseptit"); //HUOM. viittaus eri polkuun tietokannassa
 
         myRef.addChildEventListener(new ChildEventListener() {
             @Override
@@ -178,12 +185,13 @@ public class reseptiLista extends AppCompatActivity {
                         } else {
 
                             key = key.substring(0, 1).toUpperCase() + key.substring(1).toLowerCase();
-                            myRef.child("Users/" + kayttaja_id + "/lista"+"/reseptit").child(key).setValue(key); // 2.2.2019 Menee oikeaan osoitteeseen, nyt vielä reseptit omiin lokereoihin.
+                            myRef.child("Users/" + kayttaja_id + "/listat/" + listaTitteli + "/reseptit").child(key).setValue(key); // 2.2.2019 Menee oikeaan osoitteeseen, nyt vielä reseptit omiin lokereoihin.
 
                             String pushId = myRef.getKey();
 
                             Intent mene = new Intent(reseptiLista.this, reseptinNaytto.class); //2.2.2019 avataan toinen luokka jotta saadaan listalle reseptiobjektit
                             mene.putExtra("key", key);
+                            mene.putExtra("listaTitteli", listaTitteli);
                             startActivity(mene);
                         }
 
@@ -237,9 +245,9 @@ public class reseptiLista extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
 
                                                                                 ////////////////////////////////////////////////////////////////////////////
-                myRefReseptinHaku = database.getInstance().getReference("Users/" +  kayttaja_id + "/lista" +"/reseptit/"+selectedItem);
+                myRefReseptinHaku = database.getInstance().getReference("Users/" +  kayttaja_id + "/listat/" + listaTitteli + "/reseptit/"+selectedItem);
                 myRefResepti = database.getReference();
-                myRefOstosLista = database.getReference("Users/" + kayttaja_id +  "/lista" +"ostos");
+                myRefOstosLista = database.getReference("Users/" + kayttaja_id +  "/listat/" + listaTitteli + "ostos");
 
 
 
@@ -262,7 +270,7 @@ public class reseptiLista extends AppCompatActivity {
 
 
 
-                                            myRefResepti.child("Users/" + kayttaja_id + "/lista" + "/ostos").child(value + " (" + selectedItem + ")").setValue(value + " (" + selectedItem + ")");  //Lisätään reseptin sisältämät tuotteet ostoslistalle ja liitetään perään reseptin nimi
+                                            myRefResepti.child("Users/" + kayttaja_id + "/listat/" + listaTitteli + "/ostos").child(value + " (" + selectedItem + ")").setValue(value + " (" + selectedItem + ")");  //Lisätään reseptin sisältämät tuotteet ostoslistalle ja liitetään perään reseptin nimi
 
                                         }
                                 }
@@ -295,6 +303,7 @@ public class reseptiLista extends AppCompatActivity {
 
                 Intent mene = new Intent(reseptiLista.this, reseptinNaytto.class ); //2.2.2019 avataan toinen luokka jotta saadaan listalle reseptiobjektit
                 mene.putExtra("key", selectedItem);
+                mene.putExtra("listaTitteli", listaTitteli);
                 startActivity(mene);
 
             }
