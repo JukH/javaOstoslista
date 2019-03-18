@@ -63,7 +63,7 @@ public class ListaListaActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ListaListaActivity.this.setTitle("LISTALISTA");
+        ListaListaActivity.this.setTitle("Listat");
 
 
         //Luodaan viittaus tietokantaan (polkuun /ostos) johon voidaan tämän luokan kautta lisätä tuotteita (Näkyy oikeassa listanäkymässä, eli varsinaisella ostoslistalla, ei mene esim. reseptilistaan)
