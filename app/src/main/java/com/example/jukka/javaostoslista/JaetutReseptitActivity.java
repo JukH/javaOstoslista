@@ -183,6 +183,7 @@ public class JaetutReseptitActivity extends AppCompatActivity {
                         Intent mene = new Intent(JaetutReseptitActivity.this, JaettuReseptinNaytto.class); //2.2.2019 avataan toinen luokka jotta saadaan listalle reseptiobjektit
                         mene.putExtra("key", key);
                         mene.putExtra("key2", jakajan_id);
+                        mene.putExtra("key3", listaTitteli);
                         startActivity(mene);
                     }
 

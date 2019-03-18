@@ -43,7 +43,7 @@ public class JaettuActivity extends AppCompatActivity {
 
 
     String kayttaja_id = FirebaseAuth.getInstance().getCurrentUser().getUid(); //Otetaan user-id talteen
-    String kayttaja_email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+    String kayttaja_email = FirebaseAuth.getInstance().getCurrentUser().getEmail().replace(".", ",");
     String listaTitteli, jakajan_id;
 
 
@@ -84,7 +84,7 @@ public class JaettuActivity extends AppCompatActivity {
 /////
 
 
-        JaettuActivity.this.setTitle(listaTitteli);
+        JaettuActivity.this.setTitle(listaTitteli + "(jaettu)");
         jakoRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -193,14 +193,14 @@ public class JaettuActivity extends AppCompatActivity {
             alertDialog.show(); //Asetetaan viesti-ikkuna näkyväksi
         }
 ////////////////////
-/*
+
         if(id == R.id.action_jaa){
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(getString(R.string.jaa_lista));
             final EditText input = new EditText(this);
             builder.setMessage("Anna henkilön sähköposti, jonka haluat jakamaan tätä listaa:");
             builder.setView(input);
-            builder.setPositiveButton("Liity", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton("Jaa lista", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
@@ -208,35 +208,27 @@ public class JaettuActivity extends AppCompatActivity {
                     //imiRef.child("/jasenet").child("/toinen").setValue(jako_sposti);
                     //imiRef.child("/jasenet").child("/admin").setValue(kayttaja_email);
                     final String jako_sposti2 = jako_sposti.replace(".",",");
-                    kayttajanIdHakuRef.child(jako_sposti2).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot snapshot) {
-                            String jakajan_id = (String) snapshot.getValue();
-                            Toast.makeText(JaettuActivity.this, jakajan_id, Toast.LENGTH_LONG).show();
-                            jakoRef = database.getReference("Users/" + jakajan_id + "/listat");
-                            kaveriRef = database.getReference("Users/" + kayttaja_id + "/listat/"+ listaTitteli + "/kaveri");
-                            kaveriRef.child(kayttaja_id).setValue(kayttaja_id);
 
-                            jakoRef.child(listaTitteli).setValue(listaTitteli); //Lisätään jaettu lista kaverin listalistaan
+                    String vastaanOttajanEmail = kayttajanIdHakuRef.child(jako_sposti2).getKey();
+                    Toast.makeText(JaettuActivity.this, vastaanOttajanEmail, Toast.LENGTH_LONG).show();
+                    jakoRef = database.getReference("Users/" + vastaanOttajanEmail + "/listat");
+                    kaveriRef = database.getReference("Users/" + kayttaja_email + "/listat/"+ listaTitteli + "/kaveri");
+                    kaveriRef.child("kaveri").setValue(vastaanOttajanEmail);
 
-                            kaveriRef2 = database.getReference("Users/" + jakajan_id + "/listat/"+ listaTitteli + "/kaveri");
-                            kaveriRef2.child(kayttaja_id).setValue(kayttaja_id);
+                    jakoRef.child(listaTitteli).setValue(listaTitteli); //Lisätään jaettu lista kaverin listalistaan
+
+                    kaveriRef2 = database.getReference("Users/" + vastaanOttajanEmail + "/listat/"+ listaTitteli + "/jakaja");
+                    kaveriRef2.child("jakaja").setValue(kayttaja_email);
 
 
 
-                            Intent mene = new Intent(JaettuActivity.this, JaettuActivity.class ); //...luodaan intent jolla voidaan avata toinen luokka (reseptilista) jotta saadaan listalle reseptiobjektit
-                            mene.putExtra("key", jako_sposti2);
-                            mene.putExtra("key2", jakajan_id);
-                            mene.putExtra("key3", listaTitteli);
-                            startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
-                            finish();
-                        }
+                    Intent mene = new Intent(JaettuActivity.this, JaettuActivity.class ); //...luodaan intent jolla voidaan avata toinen luokka (reseptilista) jotta saadaan listalle reseptiobjektit
+                    mene.putExtra("key", jako_sposti2);
+                    mene.putExtra("key2", kayttaja_email);
+                    mene.putExtra("key3", listaTitteli);
+                    startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
+                    finish();
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
 
 
                     /*
@@ -244,7 +236,7 @@ public class JaettuActivity extends AppCompatActivity {
                     mene.putExtra("key", jako_sposti2);
                     mene.putExtra("key2", )
                     startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
-
+                    */
 
 
 
@@ -260,7 +252,7 @@ public class JaettuActivity extends AppCompatActivity {
             });
             builder.show();
             return true;
-        } */
+        }
         ///////////////////////////////////
         if(id == R.id.lisääOstos) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);

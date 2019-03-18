@@ -37,7 +37,8 @@ public class JaettuReseptinNaytto extends AppCompatActivity {
     ListView lv = null;
 
     String kayttaja_id = FirebaseAuth.getInstance().getCurrentUser().getUid(); //User-id talteen
-    String jakajan_id;
+
+    String jakajan_id, listaTitteli;
 
     FirebaseDatabase database;
     DatabaseReference myRef;
@@ -54,6 +55,7 @@ public class JaettuReseptinNaytto extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
         String  ruokaLaji = bundle.getString("key");
         jakajan_id = bundle.getString("key2");
+        listaTitteli = bundle.getString("key3");
         JaettuReseptinNaytto.this.setTitle(ruokaLaji + getString(R.string.ainekset_aineslista)); //Asetetaan toolbarin titteli vastaamaan kyseistä ruokalajia
 
         raaka_aineet = new ArrayList<>();
@@ -65,7 +67,7 @@ public class JaettuReseptinNaytto extends AppCompatActivity {
 
 
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("Users/" + jakajan_id + "/lista" + "/reseptit/"+ruokaLaji);
+        myRef = database.getReference("Users/" + jakajan_id + "/listat/" + listaTitteli + "/reseptit/"+ruokaLaji);
 
         myRef.addChildEventListener(new ChildEventListener() {
             @Override
@@ -159,7 +161,7 @@ public class JaettuReseptinNaytto extends AppCompatActivity {
                     String resepti = bundle1.getString("key");
 
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("Users/" + jakajan_id + "/lista" + "/reseptit/" + resepti); //HUOM. oikean polun määritys
+                    DatabaseReference myRef = database.getReference("Users/" + jakajan_id + "/listat/" + listaTitteli + "/reseptit/" + resepti); //HUOM. oikean polun määritys
                     String key = input.getText().toString();
 
                     if(key.equals("")){

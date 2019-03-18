@@ -164,13 +164,7 @@ public class ListaListaActivity extends AppCompatActivity {
                 //
                 AlertDialog.Builder builder = new AlertDialog.Builder(ListaListaActivity.this); //Avataan pikku-ikkuna
                 builder.setTitle("Valinnat:"); //Titteli ikkunalle
-                builder.setNegativeButton(getString(R.string.peruuta), new DialogInterface.OnClickListener() { //Voidaan peruuttaa
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
 
-                        dialog.cancel(); //Suljetaan input-ikkuna jos klikataan "Peruuta"
-                    }
-                });
                 builder.setPositiveButton("Poista lista", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -181,7 +175,7 @@ public class ListaListaActivity extends AppCompatActivity {
                                 }
                             }
                         });
-                builder.setNeutralButton("Siirry listalle", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton("Siirry listalle", new DialogInterface.OnClickListener() {
 
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -278,7 +272,7 @@ public class ListaListaActivity extends AppCompatActivity {
     //Asetetaan menu näkyväksi
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_listalista, menu);
         return true;
     }
     //Asetetaan kuuntelijat valikko-itemeiden käyttöä varten

@@ -17,7 +17,7 @@
     <string name="reseptit_menu">Reseptit</string>
     <string name="lisaa_resepti_menu">Lisää uusi</string>
     <string name="ohje">Ohje</string>
-    <string name="ohjeet_main">Voit lisätä yksittäisiä ostoksia yläpalkin +-painikkeesta tai selata, lisätä ja muokata reseptejä valitsemalla valikosta "Reseptit".</string>
+    <string name="ohjeet_main">Voit lisätä omia listoja ja jakaa niitä halutessasi muiden käyttäjien kanssa (avaa ensin se lista, jonka haluat jakaa).</string>
     <string name="ohjeet_resepti">Klikkaamalla reseptin nimeä voit joko muokata reseptiä, poistaa sen tai lisätä reseptin raaka-aineet ostoslistalle.</string>
     <string name="tyhjenna_lista">Tyhjennä koko lista?</string>
     <string name="tyhjenna">Tyhjennä</string>

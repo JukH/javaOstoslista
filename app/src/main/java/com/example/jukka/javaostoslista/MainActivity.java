@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     String kayttaja_id = FirebaseAuth.getInstance().getCurrentUser().getUid(); //Otetaan user-id talteen
     String kayttaja_email = FirebaseAuth.getInstance().getCurrentUser().getEmail().replace(".", ",");
     String listaTitteli,jakajan_sposti;
+    String kayttajaNimi = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
 
     FirebaseDatabase database;
     DatabaseReference myRef;
@@ -68,14 +69,14 @@ public class MainActivity extends AppCompatActivity {
         //if(intent.hasExtra("uudenListanNimi")) {
             listaTitteli = bundle.getString("uudenListanNimi"); //Otetaan listan nimi talteen Reffiä varten, jotta saadaan oikeaan polkuun tuotteet
             String jakajan_id = bundle.getString("key2");
-            MainActivity.this.setTitle("MAIN");
+            MainActivity.this.setTitle(listaTitteli);
        // }
 
 
         //Luodaan viittaus tietokantaan (polkuun /ostos) johon voidaan tämän luokan kautta lisätä tuotteita (Näkyy oikeassa listanäkymässä, eli varsinaisella ostoslistalla, ei mene esim. reseptilistaan)
-        String kayttaja_email = FirebaseAuth.getInstance().getCurrentUser().getEmail(); //Otetaan nykyisen käyttäjän s.posti talteen ja kuunnellaan jos joku lisää sen listalleen (haluaa jakaa hänen kanssaan)
+        String kayttaja_email = FirebaseAuth.getInstance().getCurrentUser().getEmail().replace(".", ","); //Otetaan nykyisen käyttäjän s.posti talteen ja kuunnellaan jos joku lisää sen listalleen (haluaa jakaa hänen kanssaan)
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("Users/" + kayttaja_id  +  "/listat/" + listaTitteli + "/ostos"); // TESTATAAN JOSKO MENISI JOKAISEN KÄYTTÄJÄN OMAAN POLKUUN
+        myRef = database.getReference("Users/" + kayttaja_email  +  "/listat/" + listaTitteli + "/ostos"); // TESTATAAN JOSKO MENISI JOKAISEN KÄYTTÄJÄN OMAAN POLKUUN
         nimiRef = database.getReference("Users/" +  kayttaja_id);
         kaveriRef = database.getReference("Users/" + kayttaja_id + "/listat/" + listaTitteli +"/kaveri"); //Kuunnellaan onko listalla mukana muita
         kayttajanIdHakuRef = database.getReference("Users/emailToUid");
@@ -280,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
                     final String jako_sposti2 = jako_sposti.replace(".",",");
 
                             String vastaanOttajanEmail = kayttajanIdHakuRef.child(jako_sposti2).getKey();
-                            Toast.makeText(MainActivity.this, vastaanOttajanEmail, Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, "Jaettu käyttäjälle: " + vastaanOttajanEmail.replace(",", "."), Toast.LENGTH_LONG).show();
                             jakoRef = database.getReference("Users/" + vastaanOttajanEmail + "/listat");
                             kaveriRef = database.getReference("Users/" + kayttaja_email + "/listat/"+ listaTitteli + "/kaveri");
                             kaveriRef.child("kaveri").setValue(vastaanOttajanEmail);

@@ -37,7 +37,9 @@ public class reseptinNaytto extends AppCompatActivity {
     ArrayAdapter<String> adapter = null;
     ListView lv = null;
 
-    String kayttaja_id = FirebaseAuth.getInstance().getCurrentUser().getUid(); //User-id talteen
+    //String kayttaja_id = FirebaseAuth.getInstance().getCurrentUser().getUid(); //User-id talteen
+    String kayttaja_email = FirebaseAuth.getInstance().getCurrentUser().getEmail().replace(".", ",");
+
     String listaTitteli;
 
     FirebaseDatabase database;
@@ -66,7 +68,7 @@ public class reseptinNaytto extends AppCompatActivity {
 
 
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("Users/" + kayttaja_id + "/listat/" + listaTitteli + "/reseptit/"+ruokaLaji);
+        myRef = database.getReference("Users/" + kayttaja_email + "/listat/" + listaTitteli + "/reseptit/"+ruokaLaji);
 
         myRef.addChildEventListener(new ChildEventListener() {
             @Override
@@ -160,7 +162,7 @@ public class reseptinNaytto extends AppCompatActivity {
                         String resepti = bundle1.getString("key");
 
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("Users/" + kayttaja_id + "/listat/" + listaTitteli+ "/reseptit/" + resepti); //HUOM. oikean polun määritys
+                    DatabaseReference myRef = database.getReference("Users/" + kayttaja_email + "/listat/" + listaTitteli+ "/reseptit/" + resepti); //HUOM. oikean polun määritys
                     String key = input.getText().toString();
 
                     if(key.equals("")){
