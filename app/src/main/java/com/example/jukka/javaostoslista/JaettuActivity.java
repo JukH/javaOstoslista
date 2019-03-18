@@ -74,7 +74,7 @@ public class JaettuActivity extends AppCompatActivity {
 
 
         //Luodaan viittaus tietokantaan (polkuun /ostos) johon voidaan tämän luokan kautta lisätä tuotteita (Näkyy oikeassa listanäkymässä, eli varsinaisella ostoslistalla, ei mene esim. reseptilistaan)
-        String kayttaja_email = FirebaseAuth.getInstance().getCurrentUser().getEmail(); //Otetaan nykyisen käyttäjän s.posti talteen ja kuunnellaan jos joku lisää sen listalleen (haluaa jakaa hänen kanssaan)
+        String kayttaja_email = FirebaseAuth.getInstance().getCurrentUser().getEmail().replace(".", ","); //Otetaan nykyisen käyttäjän s.posti talteen ja kuunnellaan jos joku lisää sen listalleen (haluaa jakaa hänen kanssaan)
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("Users/" + jakajan_id  +  "/listat/" + listaTitteli + "/ostos"); // TESTATAAN JOSKO MENISI JOKAISEN KÄYTTÄJÄN OMAAN POLKUUN
         nimiRef = database.getReference("Users/" +  kayttaja_id + "lista/");
@@ -84,7 +84,7 @@ public class JaettuActivity extends AppCompatActivity {
 /////
 
 
-        JaettuActivity.this.setTitle("JAETTU" +jakajan_id);
+        JaettuActivity.this.setTitle(listaTitteli);
         jakoRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -193,7 +193,7 @@ public class JaettuActivity extends AppCompatActivity {
             alertDialog.show(); //Asetetaan viesti-ikkuna näkyväksi
         }
 ////////////////////
-
+/*
         if(id == R.id.action_jaa){
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(getString(R.string.jaa_lista));
@@ -229,6 +229,7 @@ public class JaettuActivity extends AppCompatActivity {
                             mene.putExtra("key2", jakajan_id);
                             mene.putExtra("key3", listaTitteli);
                             startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
+                            finish();
                         }
 
                         @Override
@@ -243,7 +244,7 @@ public class JaettuActivity extends AppCompatActivity {
                     mene.putExtra("key", jako_sposti2);
                     mene.putExtra("key2", )
                     startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
-                    */
+
 
 
 
@@ -259,7 +260,7 @@ public class JaettuActivity extends AppCompatActivity {
             });
             builder.show();
             return true;
-        }
+        } */
         ///////////////////////////////////
         if(id == R.id.lisääOstos) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -322,6 +323,7 @@ public class JaettuActivity extends AppCompatActivity {
             mene.putExtra("key", jakajan_id);
             mene.putExtra("key2", listaTitteli);
             startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
+
 
         }
 

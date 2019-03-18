@@ -232,9 +232,9 @@ public class JaetutReseptitActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
 
                 ////////////////////////////////////////////////////////////////////////////
-                myRefReseptinHaku = database.getInstance().getReference("Users/" + jakajan_id + "/lista" + "/reseptit/" + selectedItem);
+                myRefReseptinHaku = database.getInstance().getReference("Users/" + jakajan_id + "/listat/" +listaTitteli+ "/reseptit/" + selectedItem);
                 myRefResepti = database.getReference();
-                myRefOstosLista = database.getReference("Users/" + jakajan_id + "/lista" + "ostos");
+                myRefOstosLista = database.getReference("Users/" + jakajan_id + "/listat/" +listaTitteli+ "/ostos");
 
 
                 myRefReseptinHaku.addValueEventListener(new ValueEventListener() {
@@ -249,7 +249,7 @@ public class JaetutReseptitActivity extends AppCompatActivity {
                                 String value = ds.getKey();
 
 
-                                myRefResepti.child("Users/" + jakajan_id + "/lista" + "/ostos").child(value + " (" + selectedItem + ")").setValue(value + " (" + selectedItem + ")");  //Lisätään reseptin sisältämät tuotteet ostoslistalle ja liitetään perään reseptin nimi
+                                myRefResepti.child("Users/" + jakajan_id + "/listat/" +listaTitteli+ "/ostos").child(value + " (" + selectedItem + ")").setValue(value + " (" + selectedItem + ")");  //Lisätään reseptin sisältämät tuotteet ostoslistalle ja liitetään perään reseptin nimi
 
                             }
                         }
@@ -268,6 +268,7 @@ public class JaetutReseptitActivity extends AppCompatActivity {
 
 
             }
+
         });
         builder.setNegativeButton(getString(R.string.muokkaa), new DialogInterface.OnClickListener() {
             @Override

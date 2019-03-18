@@ -49,11 +49,11 @@ public class ListaListaActivity extends AppCompatActivity {
 
     String kayttaja_id = FirebaseAuth.getInstance().getCurrentUser().getUid(); //Otetaan user-id talteen
     String kayttaja_email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-    String jakajan_id;
+    String jakajan_email;
 
     FirebaseDatabase database;
     DatabaseReference ListatRef;
-    DatabaseReference nimiRef, kaveriRef, jakoRef, kayttajanIdHakuRef, onkoJaettuRef;
+    DatabaseReference nimiRef, kaveriRef, haeAdmininEmailRef, kayttajanIdHakuRef, onkoJaettuRef, onkoJaettuRef2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,12 +67,13 @@ public class ListaListaActivity extends AppCompatActivity {
 
 
         //Luodaan viittaus tietokantaan (polkuun /ostos) johon voidaan tämän luokan kautta lisätä tuotteita (Näkyy oikeassa listanäkymässä, eli varsinaisella ostoslistalla, ei mene esim. reseptilistaan)
-        String kayttaja_email = FirebaseAuth.getInstance().getCurrentUser().getEmail(); //Otetaan nykyisen käyttäjän s.posti talteen ja kuunnellaan jos joku lisää sen listalleen (haluaa jakaa hänen kanssaan)
+        final String kayttaja_email = FirebaseAuth.getInstance().getCurrentUser().getEmail().replace(".", ","); //Otetaan nykyisen käyttäjän s.posti talteen ja kuunnellaan jos joku lisää sen listalleen (haluaa jakaa hänen kanssaan)
         database = FirebaseDatabase.getInstance();
-        ListatRef = database.getReference("Users/" + kayttaja_id  +  "/listat"); // TESTATAAN JOSKO MENISI JOKAISEN KÄYTTÄJÄN OMAAN POLKUUN
+        ListatRef = database.getReference("Users/" + kayttaja_email + "/listat"); // TESTATAAN JOSKO MENISI JOKAISEN KÄYTTÄJÄN OMAAN POLKUUN
         nimiRef = database.getReference("Users/" +  kayttaja_id);
-        kaveriRef = database.getReference("Users/" + kayttaja_id + "/lista" + "/kaveri");
-        kayttajanIdHakuRef = database.getReference("Users/emailToUid");
+        //kaveriRef = database.getReference("Users/" + kayttaja_id + "/lista" + "/kaveri");
+
+
 
 
 
@@ -159,7 +160,7 @@ public class ListaListaActivity extends AppCompatActivity {
             public void onItemClick(AdapterView parent, View view, final int position, long id) {
                 final String selectedItem = ((TextView) view).getText().toString();
                 //
-                onkoJaettuRef = database.getReference("Users/" + kayttaja_id + "/listat/" + selectedItem);
+                onkoJaettuRef = database.getReference("Users/" + kayttaja_email + "/listat/" + selectedItem);
                 //
                 AlertDialog.Builder builder = new AlertDialog.Builder(ListaListaActivity.this); //Avataan pikku-ikkuna
                 builder.setTitle("Valinnat:"); //Titteli ikkunalle
@@ -181,27 +182,70 @@ public class ListaListaActivity extends AppCompatActivity {
                             }
                         });
                 builder.setNeutralButton("Siirry listalle", new DialogInterface.OnClickListener() {
+
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
+
                                 //Koitetaan haistella onko lista sinun vai kaverin tekemä
-                                onkoJaettuRef.addValueEventListener(new ValueEventListener() {
+                                onkoJaettuRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    //String onkoJaettu = dataSnapshot.getValue(String.class);
-                                    if(dataSnapshot.hasChild("kaveri")){
-                                        if (selectedItem.trim().equals(Listat.get(position).trim())) {
-                                            Intent meneJakoListalle = new Intent(ListaListaActivity.this, JaettuActivity.class);
-                                            meneJakoListalle.putExtra("key2", jakajan_id);
-                                            meneJakoListalle.putExtra("key3", selectedItem);
-                                            startActivity(meneJakoListalle);
-                                        } else {
-                                            Toast.makeText(getApplicationContext(),"Siirtyminen ei onnistu jaetulle", Toast.LENGTH_LONG).show();
-                                        }
+
+                                    if(dataSnapshot.hasChild("kaveri")){ //olet listan luoja
+                                        onkoJaettuRef2 = database.getReference("Users/" + kayttaja_email + "/listat/" + selectedItem + "/kaveri");
+                                        onkoJaettuRef2.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                                                if (selectedItem.trim().equals(Listat.get(position).trim())) {
+                                                    Intent meneJakoListalle = new Intent(ListaListaActivity.this, JaettuActivity.class);
+                                                    meneJakoListalle.putExtra("key2", kayttaja_email);
+                                                    meneJakoListalle.putExtra("key3", selectedItem);
+                                                    startActivity(meneJakoListalle);
+                                                } else {
+                                                    Toast.makeText(getApplicationContext(),"Siirtyminen ei onnistu jaetulle", Toast.LENGTH_LONG).show();
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+                                        });
+
+
+                                    }else if(dataSnapshot.hasChild("jakaja")) { // olet käyttäjä:
+
+                                        haeAdmininEmailRef = database.getReference("Users/"+ kayttaja_email + "/listat/" + selectedItem + "/jakaja" + "/jakaja");
+                                        haeAdmininEmailRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                String jakajan_email = dataSnapshot.getValue(String.class);
+                                                if (selectedItem.trim().equals(Listat.get(position).trim())) {
+                                                    Intent meneJakoListalle = new Intent(ListaListaActivity.this, JaettuActivity.class);
+                                                    meneJakoListalle.putExtra("key2", jakajan_email);
+                                                    meneJakoListalle.putExtra("key3", selectedItem);
+                                                    startActivity(meneJakoListalle);
+                                                } else {
+                                                    Toast.makeText(getApplicationContext(),"Siirtyminen ei onnistu jaetulle", Toast.LENGTH_LONG).show();
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+                                        });
+
+
+
                                     } else {
-                                        if (selectedItem.trim().equals(Listat.get(position).trim())) {
+                                        if (selectedItem.trim().equals(Listat.get(position).trim())) { //Olet ainoa käyttäjä
                                             Intent meneListalle = new Intent(ListaListaActivity.this, MainActivity.class);
                                             meneListalle.putExtra("uudenListanNimi", selectedItem);
-                                            meneListalle.putExtra("key2", jakajan_id);
+                                            meneListalle.putExtra("key2", jakajan_email);
                                             startActivity(meneListalle);
                                         } else {
                                             Toast.makeText(getApplicationContext(),"Siirtyminen ei onnistu omalle", Toast.LENGTH_LONG).show();
@@ -317,7 +361,7 @@ public class ListaListaActivity extends AppCompatActivity {
             startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
 
         }
-
+/*
         if(id == R.id.action_jaa){
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(getString(R.string.jaa_lista));
@@ -373,7 +417,7 @@ public class ListaListaActivity extends AppCompatActivity {
             });
             builder.show();
             return true;
-        }
+        } */
         return super.onOptionsItemSelected(item);
     }
 

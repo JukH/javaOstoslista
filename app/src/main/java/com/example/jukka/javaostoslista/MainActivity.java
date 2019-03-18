@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     //boolean onkoJaettu; //Koitetaan vaihtaa listanäkymä tätä manipuloimalla jotta jaettu lista näkyy kaikilla jakajilla, eikä vain perustajalla
 
     String kayttaja_id = FirebaseAuth.getInstance().getCurrentUser().getUid(); //Otetaan user-id talteen
-    String kayttaja_email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+    String kayttaja_email = FirebaseAuth.getInstance().getCurrentUser().getEmail().replace(".", ",");
     String listaTitteli,jakajan_sposti;
 
     FirebaseDatabase database;
@@ -270,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
             final EditText input = new EditText(this);
             builder.setMessage("Anna henkilön sähköposti, jonka haluat jakamaan tätä listaa:");
             builder.setView(input);
-            builder.setPositiveButton("Liity", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton("Jaa lista", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
@@ -278,35 +278,27 @@ public class MainActivity extends AppCompatActivity {
                     //imiRef.child("/jasenet").child("/toinen").setValue(jako_sposti);
                     //imiRef.child("/jasenet").child("/admin").setValue(kayttaja_email);
                     final String jako_sposti2 = jako_sposti.replace(".",",");
-                    kayttajanIdHakuRef.child(jako_sposti2).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot snapshot) {
-                            String jakajan_id = (String) snapshot.getValue();
-                            Toast.makeText(MainActivity.this, jakajan_id, Toast.LENGTH_LONG).show();
-                            jakoRef = database.getReference("Users/" + jakajan_id + "/listat");
-                            kaveriRef = database.getReference("Users/" + kayttaja_id + "/listat/"+ listaTitteli + "/kaveri");
-                            kaveriRef.child(jakajan_id).setValue(jakajan_id);
+
+                            String vastaanOttajanEmail = kayttajanIdHakuRef.child(jako_sposti2).getKey();
+                            Toast.makeText(MainActivity.this, vastaanOttajanEmail, Toast.LENGTH_LONG).show();
+                            jakoRef = database.getReference("Users/" + vastaanOttajanEmail + "/listat");
+                            kaveriRef = database.getReference("Users/" + kayttaja_email + "/listat/"+ listaTitteli + "/kaveri");
+                            kaveriRef.child("kaveri").setValue(vastaanOttajanEmail);
 
                             jakoRef.child(listaTitteli).setValue(listaTitteli); //Lisätään jaettu lista kaverin listalistaan
 
-                            kaveriRef2 = database.getReference("Users/" + jakajan_id + "/listat/"+ listaTitteli + "/kaveri");
-                            kaveriRef2.child(kayttaja_id).setValue(kayttaja_id);
+                            kaveriRef2 = database.getReference("Users/" + vastaanOttajanEmail + "/listat/"+ listaTitteli + "/jakaja");
+                            kaveriRef2.child("jakaja").setValue(kayttaja_email);
 
 
 
                             Intent mene = new Intent(MainActivity.this, JaettuActivity.class ); //...luodaan intent jolla voidaan avata toinen luokka (reseptilista) jotta saadaan listalle reseptiobjektit
                             mene.putExtra("key", jako_sposti2);
-                            mene.putExtra("key2", jakajan_id);
+                            mene.putExtra("key2", kayttaja_email);
                             mene.putExtra("key3", listaTitteli);
                             startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
                             finish();
-                        }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
 
 
                     /*
