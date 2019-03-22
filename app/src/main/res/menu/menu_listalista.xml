@@ -8,11 +8,15 @@
         android:title="@string/action_ohje"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_clear"
+        android:orderInCategory="300"
+        android:title="@string/action_clear"
+        app:showAsAction="never" />
 
-    <item android:id="@+id/action_reseptiOpetus"
+
+    <item android:id="@+id/lisääOstos"
         android:icon="@drawable/baseline_add_circle_outline_white_48dp"
         android:title="@string/action_add"
         app:showAsAction="ifRoom" />
-
-
 </menu>

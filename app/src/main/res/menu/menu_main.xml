@@ -15,6 +15,12 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_jaa"
+        android:orderInCategory="300"
+        android:title="@string/action_jaa"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_clear"
         android:orderInCategory="300"
         android:title="@string/action_clear"
