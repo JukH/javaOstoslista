@@ -30,11 +30,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 public class JaettuActivity extends AppCompatActivity {
+
+    //Tehdään taulukko johon kerätään listan käyttäjät
+    ArrayList<String> jäsenet = null;
 
     ArrayList<String> shoppingList = null;
     ArrayAdapter<String> adapter = null;
@@ -44,13 +48,14 @@ public class JaettuActivity extends AppCompatActivity {
 
     String kayttaja_id = FirebaseAuth.getInstance().getCurrentUser().getUid(); //Otetaan user-id talteen
     String kayttaja_email = FirebaseAuth.getInstance().getCurrentUser().getEmail().replace(".", ",");
-    String listaTitteli, jakajan_id;
+    String kayttajaNimi = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+    String listaTitteli, jakajan_email, jakajan_nimi, kaverinId,jako_sposti, jakajanId,jakajanEmail, kaverinEmail;
 
 
 
     FirebaseDatabase database;
     DatabaseReference myRef;
-    DatabaseReference nimiRef, kaveriRef,kaveriRef2, jakoRef, kayttajanIdHakuRef;
+    DatabaseReference jaettukoRef, kaveriRef,kaveriRef2, jakoRef, kayttajanIdHakuRef, jakajienNimetRef,kaverinNimiRef, jakajanNimiRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +69,13 @@ public class JaettuActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         //if(intent.hasExtra("key") && intent.hasExtra("key2")) {
-            String jako_sposti = bundle.getString("key");
-            jakajan_id = bundle.getString("key2");
+            jako_sposti = bundle.getString("key");
+            jakajan_email = bundle.getString("key2");
             listaTitteli = bundle.getString("key3");
+            jakajan_nimi = bundle.getString("key4");
+            kaverinId = bundle.getString("key5");
+            jakajanId = bundle.getString("key6");
+            kaverinEmail = bundle.getString("key7");
         //}
 
 
@@ -76,15 +85,109 @@ public class JaettuActivity extends AppCompatActivity {
         //Luodaan viittaus tietokantaan (polkuun /ostos) johon voidaan tämän luokan kautta lisätä tuotteita (Näkyy oikeassa listanäkymässä, eli varsinaisella ostoslistalla, ei mene esim. reseptilistaan)
         String kayttaja_email = FirebaseAuth.getInstance().getCurrentUser().getEmail().replace(".", ","); //Otetaan nykyisen käyttäjän s.posti talteen ja kuunnellaan jos joku lisää sen listalleen (haluaa jakaa hänen kanssaan)
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("Users/" + jakajan_id  +  "/listat/" + listaTitteli + "/ostos"); // TESTATAAN JOSKO MENISI JOKAISEN KÄYTTÄJÄN OMAAN POLKUUN
-        nimiRef = database.getReference("Users/" +  kayttaja_id + "lista/");
-        jakoRef = database.getReference("Users/" + jakajan_id  +  "/listat/" + listaTitteli + "/ostos");
+        myRef = database.getReference("Users/" + jakajan_email  +  "/listat/" + listaTitteli + "/ostos"); // TESTATAAN JOSKO MENISI JOKAISEN KÄYTTÄJÄN OMAAN POLKUUN
+        jaettukoRef = database.getReference("Users/" +  kayttaja_email + "/listat/" + listaTitteli + "/");
+        jakoRef = database.getReference("Users/" + jakajan_email  +  "/listat/" + listaTitteli + "/ostos");
         kayttajanIdHakuRef = database.getReference("Users/emailToUid");
 
-/////
+        //jakajienNimetRef = database.getReference("Users/" + jakajan_id + "/listat/" + listaTitteli + "/kaveri" + "/nimet"); //Haetaan listan käyttäjien nimet
 
 
-        JaettuActivity.this.setTitle(listaTitteli + "(jaettu)");
+
+
+            //Tarkastetaan onko käyttäjä jakaja vai kaveri:
+            jaettukoRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    if(dataSnapshot.hasChild("jakaja")){
+                        jakajanEmail = dataSnapshot.child("jakaja").child(jakajan_email).getKey(); //MIKSINULL
+                        //Haetaan jakajan ja kaverin ID:t
+                        kayttajanIdHakuRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            String jakajanId = dataSnapshot.child(jakajanEmail).getValue(String.class);
+                                //Haetaan jakajan nimi joka näytetään muille paitsi itse jakajalle:
+                                jakajanNimiRef = database.getReference("Users/" + jakajanId + "/nimi");
+                                jakajanNimiRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        String jakajanNimi = dataSnapshot.getValue(String.class);
+                                        JaettuActivity.this.setTitle(listaTitteli + " (Sinä, " + jakajanNimi + ")");
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+
+
+                    } else {
+
+                        kayttajanIdHakuRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if(kaverinEmail == null) {
+                                    kaverinId = dataSnapshot.child(jako_sposti).getValue(String.class);
+                                } else {
+                                    kaverinId = dataSnapshot.child(kaverinEmail).getValue(String.class);
+                                }
+                                //Haetaan kaverin nimi joka lisättiin listalle:
+                                kaverinNimiRef = database.getReference("Users/" + kaverinId + "/nimi");
+                                kaverinNimiRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        String kaverinNimi = dataSnapshot.getValue(String.class);
+
+
+                                        JaettuActivity.this.setTitle(listaTitteli + " (Sinä, " + kaverinNimi + ")");
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////
+
+      /* if(kayttaja_email == jakajan_email.replace(",", ".")){
+            JaettuActivity.this.setTitle(listaTitteli + " (Luonut: Sinä)");
+        } else {
+            JaettuActivity.this.setTitle(listaTitteli + " (Luonut: " + jakajan_email.replace(",", ".") + ")");
+        } */
+        ////////////////////////////////////////////////////////////////////////
         jakoRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -209,25 +312,56 @@ public class JaettuActivity extends AppCompatActivity {
                     //imiRef.child("/jasenet").child("/admin").setValue(kayttaja_email);
                     final String jako_sposti2 = jako_sposti.replace(".",",");
 
-                    String vastaanOttajanEmail = kayttajanIdHakuRef.child(jako_sposti2).getKey();
-                    Toast.makeText(JaettuActivity.this, vastaanOttajanEmail, Toast.LENGTH_LONG).show();
-                    jakoRef = database.getReference("Users/" + vastaanOttajanEmail + "/listat");
-                    kaveriRef = database.getReference("Users/" + kayttaja_email + "/listat/"+ listaTitteli + "/kaveri");
-                    kaveriRef.child("kaveri").setValue(vastaanOttajanEmail);
-
-                    jakoRef.child(listaTitteli).setValue(listaTitteli); //Lisätään jaettu lista kaverin listalistaan
-
-                    kaveriRef2 = database.getReference("Users/" + vastaanOttajanEmail + "/listat/"+ listaTitteli + "/jakaja");
-                    kaveriRef2.child("jakaja").setValue(kayttaja_email);
+                    ///////////////////////////////
 
 
+                    kayttajanIdHakuRef.addListenerForSingleValueEvent(new ValueEventListener() { //Tarkastetaan onko annettua käyttäjää olemassa
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.hasChild(jako_sposti2)) {
+                                String vastaanOttajanEmail = kayttajanIdHakuRef.child(jako_sposti2).getKey();
+                                String kaverinId = dataSnapshot.child(jako_sposti2).getValue(String.class); //Haetaan jaettavan ID nimen noutoa varten Jaetussa Activityssä
 
-                    Intent mene = new Intent(JaettuActivity.this, JaettuActivity.class ); //...luodaan intent jolla voidaan avata toinen luokka (reseptilista) jotta saadaan listalle reseptiobjektit
-                    mene.putExtra("key", jako_sposti2);
-                    mene.putExtra("key2", kayttaja_email);
-                    mene.putExtra("key3", listaTitteli);
-                    startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
-                    finish();
+                                String jakajanId = dataSnapshot.child(kayttaja_email).getValue(String.class); //Haetaan jakajan ID nimen noutoa varten Jaetussa Activityssä
+
+                                Toast.makeText(JaettuActivity.this, "Jaettu käyttäjälle: " + vastaanOttajanEmail.replace(",", "."), Toast.LENGTH_LONG).show();
+                                jakoRef = database.getReference("Users/" + vastaanOttajanEmail + "/listat");
+                                kaveriRef = database.getReference("Users/" + kayttaja_email + "/listat/" + listaTitteli + "/kaveri");
+                                kaveriRef.child("kaveri").setValue(vastaanOttajanEmail);
+
+
+                                jakoRef.child(listaTitteli).setValue(listaTitteli); //Lisätään jaettu lista kaverin listalistaan
+
+                                kaveriRef2 = database.getReference("Users/" + vastaanOttajanEmail + "/listat/" + listaTitteli + "/jakaja");
+                                kaveriRef2.child("jakaja").setValue(kayttaja_email);
+
+
+
+
+
+                                Intent mene = new Intent(JaettuActivity.this, JaettuActivity.class); //...luodaan intent jolla voidaan avata toinen luokka (reseptilista) jotta saadaan listalle reseptiobjektit
+                                mene.putExtra("key", jako_sposti2);
+                                mene.putExtra("key2", kayttaja_email);
+                                mene.putExtra("key3", listaTitteli);
+                                mene.putExtra("key4", kayttajaNimi);
+                                mene.putExtra("key5", kaverinId);
+                                mene.putExtra("key6", jakajanId);
+                                startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
+                                finish();
+                            } else {
+                                Toast.makeText(JaettuActivity.this, "Käyttäjää ei löydy!", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+                    /////////////////////////////////////
+
+
 
 
 
@@ -274,7 +408,7 @@ public class JaettuActivity extends AppCompatActivity {
                     } else {
                         key = key.substring(0, 1).toUpperCase() + key.substring(1).toLowerCase(); //Asetetaan annettu String alkavaksi isolla alkukirjaimella (Listan siisteys)
 
-                        myRef.child("Users/" + jakajan_id  +  "/listat/" + listaTitteli + "/ostos").child(key).setValue(key); //Sijoitetaan annettu input tietokantaan polkuun: /ostos/input
+                        myRef.child("Users/" + jakajan_email  +  "/listat/" + listaTitteli + "/ostos").child(key).setValue(key); //Sijoitetaan annettu input tietokantaan polkuun: /ostos/input
                     }
 
                 }
@@ -312,7 +446,7 @@ public class JaettuActivity extends AppCompatActivity {
         if(id == R.id.action_reseptit){ //Jos klikataan valikossa "reseptit"..
 
             Intent mene = new Intent(JaettuActivity.this, JaetutReseptitActivity.class ); //...luodaan intent jolla voidaan avata toinen luokka (reseptilista) jotta saadaan listalle reseptiobjektit
-            mene.putExtra("key", jakajan_id);
+            mene.putExtra("key", jakajan_email);
             mene.putExtra("key2", listaTitteli);
             startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
 
@@ -340,6 +474,7 @@ public class JaettuActivity extends AppCompatActivity {
 
                 String listaTeksti =(lvMain.getItemAtPosition(position).toString()); //Poimitaan klikatusta lista-itemistä String
                 myRef.child(listaTeksti).removeValue(); //Poistetaan saadun Stringin avulla tietokannasta valittu item, tietokantakuuntelijan kautta päivittyy myös itse listanäkymä
+                Toast.makeText(JaettuActivity.this, selectedItem + " poistettu listalta", Toast.LENGTH_LONG).show();
             }
         });
         builder.setNegativeButton(getString(R.string.peruuta), new DialogInterface.OnClickListener() { //Peruutusnappi

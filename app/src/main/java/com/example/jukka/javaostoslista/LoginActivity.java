@@ -42,7 +42,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         loginEmail = (EditText) findViewById(R.id.girisEmail);
         loginPassword = (EditText) findViewById(R.id.girisParola);
         loginButton = (Button) findViewById(R.id.girisButton);
-        registerButton = (Button) findViewById(R.id.uyeOlButton);
+        //registerButton = (Button) findViewById(R.id.uyeOlButton);
         signInButton = (SignInButton) findViewById(R.id.sign_in_button);
         newPassButton = (Button) findViewById(R.id.yeniSifreButton);
 
