@@ -8,6 +8,8 @@
     <string name="action_ohje">Ohje</string>
     <string name="action_muokkaaReseptiä">Muokkaa reseptiä</string>
     <string name="action_poistaResepti">Poista resepti</string>
+    <string name="action_kirjaudu_ulos">Kirjaudu ulos</string>
+    <string name="action_poistu_jaosta">Poistu jaosta</string>
     <string name="lisäysruutu">Lisää raaka-aine</string>
     <string name="reseptiOpetusNappi">Lisää</string>
     <string name="lisaa_ostos">Lisää ostos</string>
@@ -18,6 +20,7 @@
     <string name="lisaa_resepti_menu">Lisää uusi</string>
     <string name="ohje">Ohje</string>
     <string name="ohjeet_main">Voit lisätä omia listoja ja jakaa niitä halutessasi muiden käyttäjien kanssa (avaa ensin se lista, jonka haluat jakaa).</string>
+    <string name="ohjeet_jaettu">Olet nyt jaetulla listalla. Listan jäsenten nimet näkyvät yläpalkissa (Huom! Nimilista päivittyy vasta kun jäsen avaa listan ensimmäisen kerran omalla laitteellaan).</string>
     <string name="ohjeet_resepti">Klikkaamalla reseptin nimeä voit joko muokata reseptiä, poistaa sen tai lisätä reseptin raaka-aineet ostoslistalle.</string>
     <string name="tyhjenna_lista">Tyhjennä koko lista?</string>
     <string name="tyhjenna">Tyhjennä</string>
@@ -37,6 +40,26 @@
     <string name="action_jaa">Jaa lista</string>
     <string name="jaa_lista">Jaa tämä lista</string>
     <string name="lisää_lista">Lisää uusi lista:</string>
+    <string name="salasana_pituus_toast_reg">Salasanan tulee olla vähintään 6 merkkiä pitkä</string>
+    <string name="salasana_tyhjä_toast">Salasana on pakollinen</string>
+    <string name="email_pakollinen_toast">Sähköposti on pakollinen</string>
+    <string name="käyttäjänimi_tyhjä_toast">Lisää käyttäjänimi</string>
+    <string name="salasana_tai_email_tyhjä_toast">Sähköposti tai salasana virheellinen!</string>
+    <string name="salasana_vahintaan_6merkkia">Salasana on vähintään 6 merkkiä!</string>
+    <string name="salasana_tai_email_vaarin">Sähköposti tai salasana väärin!</string>
+    <string name="sähköposti_unohtunut">Tässä versiossa ohjelmaa ominaisuutta ei ole, sillä oikeata sähköpostia ei tarvitse käyttää. Luo vaan uusi käyttäjä.</string>
+    <string name="poistettu_listalta"> poistettu listalta</string>
+    <string name="käyt_ei_löydy">Käyttäjää ei löydy!</string>
+    <string name="jaettu_käyttäjälle">Jaettu käyttäjälle: </string>
+    <string name="anna_sposti">Anna henkilön sähköposti, jonka haluat jakamaan tätä listaa:</string>
+    <string name="ei_voi_poistaa">Ei voida poistaa</string>
+    <string name="vain_admin_voi_jakaa">Vain listan omistaja voi jakaa listan muille!</string>
+    <string name="salasana_nollaus">Sähköpostin nollausviesti on lähetetty sähköpostiisi!</string>
+    <string name="tilaa_uusi_salasana">Tilaa uusi salasana</string>
+    <string name="email_hint">Sähköposti...</string>
+    <string name="salasana_hint">Salasana...</string>
+    <string name="kirjaudu">Kirjaudu</string>
+    <string name="salasana_unohtui">Unohditko salasanan?</string>
 
     <!-- Strings related to login -->
     <string name="defaultti_web_client_id">32300194624-d3fifudd0hgdjv4puabeus2pci8floc3.apps.googleusercontent.com</string>

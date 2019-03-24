@@ -26,6 +26,12 @@
         android:title="@string/action_clear"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_poistu_jaosta"
+        android:orderInCategory="500"
+        android:title="@string/action_poistu_jaosta"
+        app:showAsAction="never" />
+
 
     <item android:id="@+id/lisääOstos"
         android:icon="@drawable/baseline_add_circle_outline_white_48dp"

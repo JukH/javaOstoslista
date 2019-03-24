@@ -7,11 +7,10 @@
         android:orderInCategory="100"
         android:title="@string/action_ohje"
         app:showAsAction="never" />
-
     <item
-        android:id="@+id/action_clear"
-        android:orderInCategory="300"
-        android:title="@string/action_clear"
+        android:id="@+id/action_kirjaudu_ulos"
+        android:orderInCategory="200"
+        android:title="@string/action_kirjaudu_ulos"
         app:showAsAction="never" />
 
 

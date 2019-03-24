@@ -329,6 +329,7 @@ public class ListaListaActivity extends AppCompatActivity {
             builder.show();
             return true;
         }
+        /*
         //Koko listan tyhjentäminen kerralla
         if(id == R.id.action_clear) { //Jos klikataan valikossa "tyhennä koko lista"..
             AlertDialog.Builder builder = new AlertDialog.Builder(this); //..avataan dialogi-ikkuna
@@ -347,6 +348,14 @@ public class ListaListaActivity extends AppCompatActivity {
             });
             builder.show();
             return true;
+        } */
+
+        if(id == R.id.action_kirjaudu_ulos){
+            FirebaseAuth.getInstance().signOut();
+            Intent mene = new Intent(ListaListaActivity.this, LoginActivity.class);
+            startActivity(mene);
+            finish();
+
         }
 
         if(id == R.id.action_reseptit){ //Jos klikataan valikossa "reseptit"..

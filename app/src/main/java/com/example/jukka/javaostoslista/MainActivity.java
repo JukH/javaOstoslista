@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
                 if (selectedItem.trim().equals(shoppingList.get(position).trim())) {
                     removeElement(selectedItem, position);
                 } else {
-                    Toast.makeText(getApplicationContext(),"Ei voida poistaa", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),getString(R.string.ei_voi_poistaa), Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -270,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(getString(R.string.jaa_lista));
             final EditText input = new EditText(this);
-            builder.setMessage("Anna henkilön sähköposti, jonka haluat jakamaan tätä listaa:");
+            builder.setMessage(getString(R.string.anna_sposti));
             builder.setView(input);
             builder.setPositiveButton("Jaa lista", new DialogInterface.OnClickListener() {
                 @Override
@@ -293,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
 
                                                                                   String jakajanId = dataSnapshot.child(kayttaja_email).getValue(String.class); //Haetaan jakajan ID nimen noutoa varten Jaetussa Activityssä
 
-                                                                                  Toast.makeText(MainActivity.this, "Jaettu käyttäjälle: " + vastaanOttajanEmail.replace(",", "."), Toast.LENGTH_LONG).show();
+                                                                                  Toast.makeText(MainActivity.this, getString(R.string.jaettu_käyttäjälle) + vastaanOttajanEmail.replace(",", "."), Toast.LENGTH_LONG).show();
                                                                                   jakoRef = database.getReference("Users/" + vastaanOttajanEmail + "/listat");
                                                                                   kaveriRef = database.getReference("Users/" + kayttaja_email + "/listat/" + listaTitteli + "/kaveri");
                                                                                   kaveriRef.child("kaveri").setValue(vastaanOttajanEmail);
@@ -318,7 +318,7 @@ public class MainActivity extends AppCompatActivity {
                                                                                   startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
                                                                                   finish();
                                                                               } else {
-                                                                                  Toast.makeText(MainActivity.this, "Käyttäjää ei löydy!", Toast.LENGTH_SHORT).show();
+                                                                                  Toast.makeText(MainActivity.this, getString(R.string.käyt_ei_löydy), Toast.LENGTH_SHORT).show();
                                                                               }
                                                                           }
 
@@ -376,7 +376,7 @@ public class MainActivity extends AppCompatActivity {
 
                 String listaTeksti =(lvMain.getItemAtPosition(position).toString()); //Poimitaan klikatusta lista-itemistä String
                 myRef.child(listaTeksti).removeValue(); //Poistetaan saadun Stringin avulla tietokannasta valittu item, tietokantakuuntelijan kautta päivittyy myös itse listanäkymä
-                Toast.makeText(MainActivity.this, selectedItem + " poistettu listalta", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, selectedItem + " " + getString(R.string.poistettu_listalta), Toast.LENGTH_LONG).show();
             }
         });
         builder.setNegativeButton(getString(R.string.peruuta), new DialogInterface.OnClickListener() { //Peruutusnappi
