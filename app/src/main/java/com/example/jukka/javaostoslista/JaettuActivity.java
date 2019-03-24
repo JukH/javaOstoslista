@@ -56,7 +56,7 @@ public class JaettuActivity extends AppCompatActivity {
 
     FirebaseDatabase database;
     DatabaseReference myRef;
-    DatabaseReference jaettukoRef, kaveriRef,kaveriRef2, jakoRef, kayttajanIdHakuRef, jäsenetRef,kaverinNimiRef, jakajanNimiRef, nimienLisäysRef, ListatRef;
+    DatabaseReference jaettukoRef, kaveriRef,kaveriRef2, jakoRef, kayttajanIdHakuRef, jäsenetRef,kaverinNimiRef, jakajanNimiRef, nimienLisäysRef, ListatRef, onkoJaettuRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +123,7 @@ public class JaettuActivity extends AppCompatActivity {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 String uusiJäsen = dataSnapshot.getValue(String.class);
                 jäsenet.add(uusiJäsen);
-                JaettuActivity.this.setTitle(listaTitteli + jäsenet.toString());
+                JaettuActivity.this.setTitle(listaTitteli + " " +jäsenet.toString());
 
 
 
@@ -138,7 +138,7 @@ public class JaettuActivity extends AppCompatActivity {
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
                 String poistunutJäsen = dataSnapshot.getValue(String.class);
                 jäsenet.remove(poistunutJäsen);
-                JaettuActivity.this.setTitle(listaTitteli + jäsenet.toString());
+                JaettuActivity.this.setTitle(listaTitteli + " " + jäsenet.toString());
 
             }
 
@@ -504,20 +504,35 @@ public class JaettuActivity extends AppCompatActivity {
         }
         //Listan jaosta poistuminen
         if(id == R.id.action_poistu_jaosta){
-
-            jäsenetRef.addValueEventListener(new ValueEventListener() {
+            onkoJaettuRef = database.getReference("Users/" + kayttaja_email + "/listat/" + listaTitteli);
+            onkoJaettuRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    nimi = dataSnapshot.getValue(String.class);
-                    jäsenet.remove(nimi);
-                    nimienLisäysRef.child(nimi).setValue(null);
-                    ListatRef = database.getReference("Users/" + kayttaja_email + "/listat");
-                    ListatRef.child(listaTitteli).removeValue();
-                    Intent mene = new Intent(JaettuActivity.this, ListaListaActivity.class);
-                    startActivity(mene);
-                    finish();
+                    if(dataSnapshot.hasChild("kaveri")) { //Tarkastetaan onko käyttäjä listan jakaja, eikä anneta hänen poistua jos näin on
+                        Toast.makeText(JaettuActivity.this, "Et voi poistua itse jakamaltasi listalta!", Toast.LENGTH_SHORT).show();
+                    } else {
+
+                        jäsenetRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                nimi = dataSnapshot.getValue(String.class);
+                                jäsenet.remove(nimi);
+                                nimienLisäysRef.child(nimi).setValue(null);
+                                ListatRef = database.getReference("Users/" + kayttaja_email + "/listat");
+                                ListatRef.child(listaTitteli).removeValue();
+                                Intent mene = new Intent(JaettuActivity.this, ListaListaActivity.class);
+                                startActivity(mene);
+                                finish();
 
 
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
                 }
 
                 @Override
@@ -525,6 +540,7 @@ public class JaettuActivity extends AppCompatActivity {
 
                 }
             });
+
 
 
 

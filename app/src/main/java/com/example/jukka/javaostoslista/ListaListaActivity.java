@@ -52,9 +52,11 @@ public class ListaListaActivity extends AppCompatActivity {
     String kayttaja_email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
     String jakajan_email;
 
+    int jasenmaara;
+
     FirebaseDatabase database;
     DatabaseReference ListatRef;
-    DatabaseReference nimiRef, kaveriRef, haeAdmininEmailRef, kayttajanIdHakuRef, onkoJaettuRef, onkoJaettuRef2;
+    DatabaseReference nimiRef, kaveriRef, haeAdmininEmailRef, kayttajanIdHakuRef, onkoJaettuRef, onkoJaettuRef2, jasenMaaraRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +74,7 @@ public class ListaListaActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         ListatRef = database.getReference("Users/" + kayttaja_email + "/listat"); // TESTATAAN JOSKO MENISI JOKAISEN KÄYTTÄJÄN OMAAN POLKUUN
         nimiRef = database.getReference("Users/" +  kayttaja_id);
+
         //kaveriRef = database.getReference("Users/" + kayttaja_id + "/lista" + "/kaveri");
 
 
@@ -178,75 +181,92 @@ public class ListaListaActivity extends AppCompatActivity {
 
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
-                        //Koitetaan haistella onko lista sinun vai kaverin tekemä
-                        onkoJaettuRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        jasenMaaraRef = database.getReference("Users/" + kayttaja_email + "/listat/" + selectedItem + "/kaveri" + "/jakajat");
+                        jasenMaaraRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                jasenmaara = (int) dataSnapshot.getChildrenCount();
 
-                                if(dataSnapshot.hasChild("kaveri")){ //olet listan luoja
-                                    onkoJaettuRef2 = database.getReference("Users/" + kayttaja_email + "/listat/" + selectedItem + "/kaveri");
-                                    onkoJaettuRef2.addListenerForSingleValueEvent(new ValueEventListener() {
+                                //Koitetaan haistella onko lista sinun vai kaverin tekemä
+                                onkoJaettuRef.addListenerForSingleValueEvent(new ValueEventListener() {
 
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            String kaverinEmail = dataSnapshot.child("kaveri").getValue(String.class);
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                                            if (selectedItem.trim().equals(Listat.get(position).trim())) {
-                                                Intent meneJakoListalle = new Intent(ListaListaActivity.this, JaettuActivity.class);
-                                                meneJakoListalle.putExtra("key2", kayttaja_email);
-                                                meneJakoListalle.putExtra("key3", selectedItem);
-                                                meneJakoListalle.putExtra("key7", kaverinEmail);
-                                                startActivity(meneJakoListalle);
+                                        if(dataSnapshot.hasChild("kaveri") && jasenmaara > 1){ //olet listan luoja
+                                            onkoJaettuRef2 = database.getReference("Users/" + kayttaja_email + "/listat/" + selectedItem + "/kaveri");
+                                            onkoJaettuRef2.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                    String kaverinEmail = dataSnapshot.child("kaveri").getValue(String.class);
+
+                                                    if (selectedItem.trim().equals(Listat.get(position).trim())) {
+                                                        Intent meneJakoListalle = new Intent(ListaListaActivity.this, JaettuActivity.class);
+                                                        meneJakoListalle.putExtra("key2", kayttaja_email);
+                                                        meneJakoListalle.putExtra("key3", selectedItem);
+                                                        meneJakoListalle.putExtra("key7", kaverinEmail);
+                                                        startActivity(meneJakoListalle);
+                                                    } else {
+                                                        Toast.makeText(getApplicationContext(),"Siirtyminen ei onnistu jaetulle", Toast.LENGTH_LONG).show();
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                }
+                                            });
+
+
+                                        }else if(dataSnapshot.hasChild("jakaja")) { // olet käyttäjä:
+
+                                            haeAdmininEmailRef = database.getReference("Users/"+ kayttaja_email + "/listat/" + selectedItem + "/jakaja" + "/jakaja");
+                                            haeAdmininEmailRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                    String jakajan_email = dataSnapshot.getValue(String.class);
+                                                    if (selectedItem.trim().equals(Listat.get(position).trim())) {
+                                                        Intent meneJakoListalle = new Intent(ListaListaActivity.this, JaettuActivity.class);
+                                                        meneJakoListalle.putExtra("key2", jakajan_email);
+                                                        meneJakoListalle.putExtra("key3", selectedItem);
+                                                        startActivity(meneJakoListalle);
+                                                    } else {
+                                                        Toast.makeText(getApplicationContext(),"Siirtyminen ei onnistu jaetulle listalle!", Toast.LENGTH_LONG).show();
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                }
+                                            });
+
+
+
+                                        } else {
+                                            if (selectedItem.trim().equals(Listat.get(position).trim())) { //Olet ainoa käyttäjä
+                                                Intent meneListalle = new Intent(ListaListaActivity.this, MainActivity.class);
+                                                meneListalle.putExtra("uudenListanNimi", selectedItem);
+                                                meneListalle.putExtra("key2", jakajan_email);
+                                                startActivity(meneListalle);
                                             } else {
-                                                Toast.makeText(getApplicationContext(),"Siirtyminen ei onnistu jaetulle", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(getApplicationContext(),"Siirtyminen ei onnistu omalle", Toast.LENGTH_LONG).show();
                                             }
-                                        }
 
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
                                         }
-                                    });
-
-
-                                }else if(dataSnapshot.hasChild("jakaja")) { // olet käyttäjä:
-
-                                    haeAdmininEmailRef = database.getReference("Users/"+ kayttaja_email + "/listat/" + selectedItem + "/jakaja" + "/jakaja");
-                                    haeAdmininEmailRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            String jakajan_email = dataSnapshot.getValue(String.class);
-                                            if (selectedItem.trim().equals(Listat.get(position).trim())) {
-                                                Intent meneJakoListalle = new Intent(ListaListaActivity.this, JaettuActivity.class);
-                                                meneJakoListalle.putExtra("key2", jakajan_email);
-                                                meneJakoListalle.putExtra("key3", selectedItem);
-                                                startActivity(meneJakoListalle);
-                                            } else {
-                                                Toast.makeText(getApplicationContext(),"Siirtyminen ei onnistu jaetulle listalle!", Toast.LENGTH_LONG).show();
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                        }
-                                    });
-
-
-
-                                } else {
-                                    if (selectedItem.trim().equals(Listat.get(position).trim())) { //Olet ainoa käyttäjä
-                                        Intent meneListalle = new Intent(ListaListaActivity.this, MainActivity.class);
-                                        meneListalle.putExtra("uudenListanNimi", selectedItem);
-                                        meneListalle.putExtra("key2", jakajan_email);
-                                        startActivity(meneListalle);
-                                    } else {
-                                        Toast.makeText(getApplicationContext(),"Siirtyminen ei onnistu omalle", Toast.LENGTH_LONG).show();
                                     }
 
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                }
+                                    }
+                                });
+
+
+
+
                             }
 
                             @Override
@@ -254,6 +274,7 @@ public class ListaListaActivity extends AppCompatActivity {
 
                             }
                         });
+
                         //
 
                     }
@@ -424,7 +445,7 @@ public class ListaListaActivity extends AppCompatActivity {
     //Tuotteen poisto-metodi
     public void removeElement(final String selectedItem, final int position){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.poista) + selectedItem + "?");
+        builder.setTitle(getString(R.string.poista) + " " +  selectedItem + "?");
         builder.setPositiveButton(getString(R.string.poista_), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
