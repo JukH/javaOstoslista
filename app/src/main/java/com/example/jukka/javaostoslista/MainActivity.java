@@ -14,8 +14,6 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Collections;
-
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import android.app.AlertDialog;
@@ -44,11 +42,10 @@ public class MainActivity extends AppCompatActivity {
     ArrayAdapter<String> adapter = null;
     ListView lvMain = null;
     private static MainActivity instance;
-    //boolean onkoJaettu; //Koitetaan vaihtaa listanäkymä tätä manipuloimalla jotta jaettu lista näkyy kaikilla jakajilla, eikä vain perustajalla
 
     String kayttaja_id = FirebaseAuth.getInstance().getCurrentUser().getUid(); //Otetaan user-id talteen
     String kayttaja_email = FirebaseAuth.getInstance().getCurrentUser().getEmail().replace(".", ",");
-    String listaTitteli,jakajan_sposti;
+    String listaTitteli;
     String kayttajaNimi = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
 
     FirebaseDatabase database;
@@ -80,28 +77,6 @@ public class MainActivity extends AppCompatActivity {
         nimiRef = database.getReference("Users/" +  kayttaja_id);
         kaveriRef = database.getReference("Users/" + kayttaja_id + "/listat/" + listaTitteli +"/kaveri"); //Kuunnellaan onko listalla mukana muita
         kayttajanIdHakuRef = database.getReference("Users/emailToUid");
-
-
-
-
-
-       /* kaveriRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                long value = dataSnapshot.getChildrenCount();
-                if(value > 0){
-                    Intent mene = new Intent(MainActivity.this, JaettuActivity.class);
-                    startActivity(mene);
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        }); */
-
 
 
 
@@ -148,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -173,7 +147,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // lvMain.setBackgroundColor(Color.LTGRAY); Saa vaihdettua listan taustavärin
 
 
 
@@ -203,19 +176,14 @@ public class MainActivity extends AppCompatActivity {
             alertDialog.show(); //Asetetaan viesti-ikkuna näkyväksi
         }
 
-        if(id == R.id.lisääOstos) {
+        if(id == R.id.lisääOstos) { //Kun valitaan +-symboli, tapahtuu seuraavaa:
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(getString(R.string.lisaa_ostos));
-            final EditText input = new EditText(this);
+            final EditText input = new EditText(this); //otetaan talteen lisätty tuote
             builder.setView(input);
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-
-                    //Otetaan yhteys tietokantaan
-                   // FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    //DatabaseReference myRef = database.getReference();
-
 
                     String key = input.getText().toString(); //Poimitaan text-inputista String
                     if(key.equals(null) || key.equals("")) { //Tsekataan ettei ole tyhjä input (kaatuu muuten)
@@ -277,8 +245,6 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int which) {
 
                     final String jako_sposti = input.getText().toString().trim();
-                    //imiRef.child("/jasenet").child("/toinen").setValue(jako_sposti);
-                    //imiRef.child("/jasenet").child("/admin").setValue(kayttaja_email);
                     final String jako_sposti2 = jako_sposti.replace(".",",");
 
                         ///////////////////////////////
@@ -307,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
+                                                                                    //Avataan jaettaessa toinen activity, jossa saadaan lista jaettua käyttäjien kesken
                                                                                   Intent mene = new Intent(MainActivity.this, JaettuActivity.class); //...luodaan intent jolla voidaan avata toinen luokka (reseptilista) jotta saadaan listalle reseptiobjektit
                                                                                   mene.putExtra("key", jako_sposti2);
                                                                                   mene.putExtra("key2", kayttaja_email);
@@ -328,18 +294,6 @@ public class MainActivity extends AppCompatActivity {
                                                                           }
                                                                       });
 
-                            /////////////////////////////////////
-
-                           
-
-
-
-                    /*
-                    Intent mene = new Intent(MainActivity.this, JaettuActivity.class ); //...luodaan intent jolla voidaan avata toinen luokka (reseptilista) jotta saadaan listalle reseptiobjektit
-                    mene.putExtra("key", jako_sposti2);
-                    mene.putExtra("key2", )
-                    startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
-                    */
 
 
 

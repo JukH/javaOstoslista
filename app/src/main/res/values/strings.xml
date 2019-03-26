@@ -19,7 +19,7 @@
     <string name="reseptit_menu">Reseptit</string>
     <string name="lisaa_resepti_menu">Lisää uusi</string>
     <string name="ohje">Ohje</string>
-    <string name="ohjeet_main">Voit lisätä omia listoja ja jakaa niitä halutessasi muiden käyttäjien kanssa (avaa ensin se lista, jonka haluat jakaa).</string>
+    <string name="ohjeet_main">Olet yksityisellä ostoslistallasi. Voit lisätä tuotteita +-merkkiä painamalla tai reseptejä valitsemalla valikosta "reseptit". Voit myös jakaa tämän listan valitsemalla "jaa lista".</string>
     <string name="ohjeet_jaettu">Olet nyt jaetulla listalla. Listan jäsenten nimet näkyvät yläpalkissa (Huom! Nimilista päivittyy vasta kun jäsen avaa listan ensimmäisen kerran omalla laitteellaan).</string>
     <string name="ohjeet_resepti">Klikkaamalla reseptin nimeä voit joko muokata reseptiä, poistaa sen tai lisätä reseptin raaka-aineet ostoslistalle.</string>
     <string name="tyhjenna_lista">Tyhjennä koko lista?</string>

@@ -75,28 +75,6 @@ public class ListaListaActivity extends AppCompatActivity {
         ListatRef = database.getReference("Users/" + kayttaja_email + "/listat"); // TESTATAAN JOSKO MENISI JOKAISEN KÄYTTÄJÄN OMAAN POLKUUN
         nimiRef = database.getReference("Users/" +  kayttaja_id);
 
-        //kaveriRef = database.getReference("Users/" + kayttaja_id + "/lista" + "/kaveri");
-
-
-
-
-
-
-
-       /* kaveriRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                long value = dataSnapshot.getChildrenCount();
-                if(value > 0){
-                    Intent mene = new Intent(MainActivity.this, JaettuActivity.class);
-                    startActivity(mene);
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        }); */
-
 
 
 
@@ -285,7 +263,7 @@ public class ListaListaActivity extends AppCompatActivity {
             }
         });
 
-        // lvMain.setBackgroundColor(Color.LTGRAY); Saa vaihdettua listan taustavärin
+
 
 
 
@@ -350,26 +328,7 @@ public class ListaListaActivity extends AppCompatActivity {
             builder.show();
             return true;
         }
-        /*
-        //Koko listan tyhjentäminen kerralla
-        if(id == R.id.action_clear) { //Jos klikataan valikossa "tyhennä koko lista"..
-            AlertDialog.Builder builder = new AlertDialog.Builder(this); //..avataan dialogi-ikkuna
-            builder.setTitle(getString(R.string.tyhjenna_lista)); //Asetetaan viesti ikkunaan
-            builder.setPositiveButton(getString(R.string.tyhjenna), new DialogInterface.OnClickListener() { //Asetetaan tyhjennynappi
-                @Override
-                public void onClick(DialogInterface dialog, int which) { //Jos klikataan "Tyhjennä"
-                    ListatRef.setValue(null); //Tyhjennetään annettu tietokantapolku (myref = /ostos), eli kaikki ostokset poistuvat listalta
-                }
-            });
-            builder.setNegativeButton(getString(R.string.peruuta), new DialogInterface.OnClickListener() { //Peruutus-nappi
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel(); //Klikatessa "Peruuta"-nappia, suljetaan ikkuna
-                }
-            });
-            builder.show();
-            return true;
-        } */
+
 
         if(id == R.id.action_kirjaudu_ulos){
             FirebaseAuth.getInstance().signOut();
@@ -385,53 +344,7 @@ public class ListaListaActivity extends AppCompatActivity {
             startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
 
         }
-/*
-        if(id == R.id.action_jaa){
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(getString(R.string.jaa_lista));
-            final EditText input = new EditText(this);
-            builder.setMessage("Anna henkilön sähköposti, jonka listalle haluat liittyä:");
-            builder.setView(input);
-            builder.setPositiveButton("Liity", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    final String jako_sposti = input.getText().toString().trim();
-                    //imiRef.child("/jasenet").child("/toinen").setValue(jako_sposti);
-                    //imiRef.child("/jasenet").child("/admin").setValue(kayttaja_email);
-                    final String jako_sposti2 = jako_sposti.replace(".",",");
-                    kayttajanIdHakuRef.child(jako_sposti2).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot snapshot) {
-                            jakajan_id = (String) snapshot.getValue();
-                            Toast.makeText(ListaListaActivity.this, jakajan_id, Toast.LENGTH_LONG).show();
-                            jakoRef = database.getReference("Users/" + jakajan_id + "/lista" + "/ostos");
-                            kaveriRef = database.getReference("Users/" + jakajan_id + "/lista" + "/kaveri");
-                            kaveriRef.child(kayttaja_id).setValue(kayttaja_id);
-                            Intent mene = new Intent(ListaListaActivity.this, JaettuActivity.class ); //...luodaan intent jolla voidaan avata toinen luokka (reseptilista) jotta saadaan listalle reseptiobjektit
-                            mene.putExtra("key", jako_sposti2);
-                            mene.putExtra("key2", jakajan_id);
-                            startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
-                        }
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                        }
-                    });
-                    //
-                    Intent mene = new Intent(ListaListaActivity.this, JaettuActivity.class ); //...luodaan intent jolla voidaan avata toinen luokka (reseptilista) jotta saadaan listalle reseptiobjektit
-                    mene.putExtra("key", jako_sposti2);
-                    startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
-                    //
-                }
-            });
-            builder.setNegativeButton(getString(R.string.peruuta), new DialogInterface.OnClickListener() { //Voidaan peruuttaa input
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel(); //Suljetaan input-ikkuna jos klikataan "Peruuta"
-                }
-            });
-            builder.show();
-            return true;
-        } */
+
         return super.onOptionsItemSelected(item);
     }
 

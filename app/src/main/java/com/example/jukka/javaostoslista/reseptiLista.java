@@ -41,7 +41,7 @@ public class reseptiLista extends AppCompatActivity {
     ArrayAdapter<String> adapter = null;
     ListView lv = null;
 
-    //String kayttaja_id = FirebaseAuth.getInstance().getCurrentUser().getUid(); //User-id talteen
+
     String kayttaja_email = FirebaseAuth.getInstance().getCurrentUser().getEmail().replace(".", ",");
     String listaTitteli;
 
