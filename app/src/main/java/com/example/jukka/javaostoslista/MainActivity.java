@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     FirebaseDatabase database;
     DatabaseReference myRef;
-    DatabaseReference nimiRef, kaveriRef, kaveriRef2, jakoRef, kayttajanIdHakuRef;
+    DatabaseReference nimiRef, kaveriRef, kaveriRef2, jakoRef, kayttajanIdHakuRef, kayttajanNimenHakuRef, jakajanIdRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
         nimiRef = database.getReference("Users/" +  kayttaja_id);
         kaveriRef = database.getReference("Users/" + kayttaja_id + "/listat/" + listaTitteli +"/kaveri"); //Kuunnellaan onko listalla mukana muita
         kayttajanIdHakuRef = database.getReference("Users/emailToUid");
+
 
 
 
@@ -167,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
                 if (selectedItem.trim().equals(shoppingList.get(position).trim())) {
                     removeElement(selectedItem, position);
                 } else {
-                    Toast.makeText(getApplicationContext(),"Ei voida poistaa", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),getString(R.string.ei_voi_poistaa), Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -269,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(getString(R.string.jaa_lista));
             final EditText input = new EditText(this);
-            builder.setMessage("Anna henkilön sähköposti, jonka haluat jakamaan tätä listaa:");
+            builder.setMessage(getString(R.string.anna_sposti));
             builder.setView(input);
             builder.setPositiveButton("Jaa lista", new DialogInterface.OnClickListener() {
                 @Override
@@ -280,25 +281,56 @@ public class MainActivity extends AppCompatActivity {
                     //imiRef.child("/jasenet").child("/admin").setValue(kayttaja_email);
                     final String jako_sposti2 = jako_sposti.replace(".",",");
 
-                            String vastaanOttajanEmail = kayttajanIdHakuRef.child(jako_sposti2).getKey();
-                            Toast.makeText(MainActivity.this, "Jaettu käyttäjälle: " + vastaanOttajanEmail.replace(",", "."), Toast.LENGTH_LONG).show();
-                            jakoRef = database.getReference("Users/" + vastaanOttajanEmail + "/listat");
-                            kaveriRef = database.getReference("Users/" + kayttaja_email + "/listat/"+ listaTitteli + "/kaveri");
-                            kaveriRef.child("kaveri").setValue(vastaanOttajanEmail);
-
-                            jakoRef.child(listaTitteli).setValue(listaTitteli); //Lisätään jaettu lista kaverin listalistaan
-
-                            kaveriRef2 = database.getReference("Users/" + vastaanOttajanEmail + "/listat/"+ listaTitteli + "/jakaja");
-                            kaveriRef2.child("jakaja").setValue(kayttaja_email);
+                        ///////////////////////////////
 
 
+                    kayttajanIdHakuRef.addListenerForSingleValueEvent(new ValueEventListener() { //Tarkastetaan onko annettua käyttäjää olemassa
+                                                                          @Override
+                                                                          public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                                              if (dataSnapshot.hasChild(jako_sposti2)) {
+                                                                                  String vastaanOttajanEmail = kayttajanIdHakuRef.child(jako_sposti2).getKey();
+                                                                                  String kaverinId = dataSnapshot.child(jako_sposti2).getValue(String.class); //Haetaan jaettavan ID nimen noutoa varten Jaetussa Activityssä
 
-                            Intent mene = new Intent(MainActivity.this, JaettuActivity.class ); //...luodaan intent jolla voidaan avata toinen luokka (reseptilista) jotta saadaan listalle reseptiobjektit
-                            mene.putExtra("key", jako_sposti2);
-                            mene.putExtra("key2", kayttaja_email);
-                            mene.putExtra("key3", listaTitteli);
-                            startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
-                            finish();
+                                                                                  String jakajanId = dataSnapshot.child(kayttaja_email).getValue(String.class); //Haetaan jakajan ID nimen noutoa varten Jaetussa Activityssä
+
+                                                                                  Toast.makeText(MainActivity.this, getString(R.string.jaettu_käyttäjälle) + vastaanOttajanEmail.replace(",", "."), Toast.LENGTH_LONG).show();
+                                                                                  jakoRef = database.getReference("Users/" + vastaanOttajanEmail + "/listat");
+                                                                                  kaveriRef = database.getReference("Users/" + kayttaja_email + "/listat/" + listaTitteli + "/kaveri");
+                                                                                  kaveriRef.child("kaveri").setValue(vastaanOttajanEmail);
+
+
+                                                                                  jakoRef.child(listaTitteli).setValue(listaTitteli); //Lisätään jaettu lista kaverin listalistaan
+
+                                                                                  kaveriRef2 = database.getReference("Users/" + vastaanOttajanEmail + "/listat/" + listaTitteli + "/jakaja");
+                                                                                  kaveriRef2.child("jakaja").setValue(kayttaja_email);
+
+
+
+
+
+                                                                                  Intent mene = new Intent(MainActivity.this, JaettuActivity.class); //...luodaan intent jolla voidaan avata toinen luokka (reseptilista) jotta saadaan listalle reseptiobjektit
+                                                                                  mene.putExtra("key", jako_sposti2);
+                                                                                  mene.putExtra("key2", kayttaja_email);
+                                                                                  mene.putExtra("key3", listaTitteli);
+                                                                                  mene.putExtra("key4", kayttajaNimi);
+                                                                                  mene.putExtra("key5", kaverinId);
+                                                                                  mene.putExtra("key6", jakajanId);
+                                                                                  startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
+                                                                                  finish();
+                                                                              } else {
+                                                                                  Toast.makeText(MainActivity.this, getString(R.string.käyt_ei_löydy), Toast.LENGTH_SHORT).show();
+                                                                              }
+                                                                          }
+
+                                                                          @Override
+                                                                          public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                                          }
+                                                                      });
+
+                            /////////////////////////////////////
+
+                           
 
 
 
@@ -344,6 +376,7 @@ public class MainActivity extends AppCompatActivity {
 
                 String listaTeksti =(lvMain.getItemAtPosition(position).toString()); //Poimitaan klikatusta lista-itemistä String
                 myRef.child(listaTeksti).removeValue(); //Poistetaan saadun Stringin avulla tietokannasta valittu item, tietokantakuuntelijan kautta päivittyy myös itse listanäkymä
+                Toast.makeText(MainActivity.this, selectedItem + " " + getString(R.string.poistettu_listalta), Toast.LENGTH_LONG).show();
             }
         });
         builder.setNegativeButton(getString(R.string.peruuta), new DialogInterface.OnClickListener() { //Peruutusnappi

@@ -49,19 +49,19 @@ public class RegisterActivity extends AppCompatActivity {
 
 
                 if(TextUtils.isEmpty(kayttajaNimi)){
-                    Toast.makeText(getApplicationContext(),"Lisää käyttäjänimi",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),getString(R.string.käyttäjänimi_tyhjä_toast),Toast.LENGTH_SHORT).show();
                 }
 
                 if(TextUtils.isEmpty(email)){
-                    Toast.makeText(getApplicationContext(),"Sähköposti on pakollinen",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),getString(R.string.email_pakollinen_toast),Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(TextUtils.isEmpty(password)){
-                    Toast.makeText(getApplicationContext(),"Salasana on pakollinen",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),getString(R.string.salasana_tyhjä_toast),Toast.LENGTH_SHORT).show();
                 }
 
                 if(password.length()<6){
-                    Toast.makeText(getApplicationContext(),"Salasanan tulee olla vähintään 6 merkkiä pitkä",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),getString(R.string.salasana_pituus_toast_reg),Toast.LENGTH_SHORT).show();
                 }
 
                 firebaseAuth.createUserWithEmailAndPassword(email,password)
@@ -84,7 +84,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     finish();
                                 }
                                 else{
-                                    Toast.makeText(getApplicationContext(),"Sähköposti tai salasana virheellinen!",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(),getString(R.string.salasana_tai_email_tyhjä_toast),Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -95,11 +95,13 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+                finish();
             }
         });
 
         if(firebaseAuth.getCurrentUser()!=null){
             startActivity(new Intent(getApplicationContext(),ListaListaActivity.class));
+            finish();
         }
     }
 }

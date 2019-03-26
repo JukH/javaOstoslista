@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:hint="Sähköposti..."
+            android:hint="@string/email_hint"
             android:inputType="textEmailAddress" />
 
     </android.support.design.widget.TextInputLayout>
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:ems="10"
-            android:hint="Salasana..."
+            android:hint="@string/salasana_hint"
             android:inputType="textPassword" />
 
     </android.support.design.widget.TextInputLayout>
@@ -43,7 +43,7 @@
         android:orientation="horizontal"
         android:gravity="center">
         <Button
-            android:text="Login"
+            android:text="@string/kirjaudu"
             android:id="@+id/girisButton"
             android:layout_width="140dp"
             android:layout_height="45dp"
@@ -53,19 +53,10 @@
             android:layout_marginRight="10dp"
             android:background="@color/colorAccent"/>
 
-        <Button
-            android:text="Register!"
-            android:id="@+id/uyeOlButton"
-            android:layout_width="140dp"
-            android:layout_height="45dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            android:textColor="#FFFF"
-            android:background="@color/colorAccent"/>
     </LinearLayout>
 
     <Button
-        android:text="I forgot password"
+        android:text="@string/salasana_unohtui"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:textAllCaps="false"
@@ -74,13 +65,6 @@
         android:textColor="@color/colorPrimary"
         android:layout_marginBottom="8dp"
         />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="OR"
-        android:gravity="center"
-        android:textColor="@color/colorPrimary"/>
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"

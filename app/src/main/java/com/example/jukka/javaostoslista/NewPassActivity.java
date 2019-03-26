@@ -34,7 +34,7 @@ public class NewPassActivity extends AppCompatActivity {
                 String email = email_input2.getText().toString();
 
                 if(TextUtils.isEmpty(email)){
-                    Toast.makeText(getApplicationContext(),"Please fill e-mail",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),getString(R.string.email_pakollinen_toast),Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -43,10 +43,10 @@ public class NewPassActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if(task.isSuccessful()){
-                                    Toast.makeText(getApplicationContext(),"Password reset link was sent your email address",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(),getString(R.string.salasana_nollaus),Toast.LENGTH_SHORT).show();
                                 }
                                 else{
-                                    Toast.makeText(getApplicationContext(),"Mail sending error",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(),getString(R.string.virhe),Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });

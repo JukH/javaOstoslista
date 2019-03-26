@@ -42,7 +42,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         loginEmail = (EditText) findViewById(R.id.girisEmail);
         loginPassword = (EditText) findViewById(R.id.girisParola);
         loginButton = (Button) findViewById(R.id.girisButton);
-        registerButton = (Button) findViewById(R.id.uyeOlButton);
+        //registerButton = (Button) findViewById(R.id.uyeOlButton);
         signInButton = (SignInButton) findViewById(R.id.sign_in_button);
         newPassButton = (Button) findViewById(R.id.yeniSifreButton);
 
@@ -69,6 +69,15 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         if(firebaseAuth.getCurrentUser()!=null){
             startActivity(new Intent(getApplicationContext(),ListaListaActivity.class));
         }
+        
+        newPassButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent mene = new Intent(LoginActivity.this, NewPassActivity.class);
+                startActivity(mene);
+                //Toast.makeText(LoginActivity.this, getString(R.string.sähköposti_unohtunut), Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -78,15 +87,15 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 String password = loginPassword.getText().toString();
 
                 if(TextUtils.isEmpty(email)){
-                    Toast.makeText(getApplicationContext(),"Please fill in the required fields",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),getString(R.string.email_pakollinen_toast),Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(TextUtils.isEmpty(password)){
-                    Toast.makeText(getApplicationContext(),"Please fill in the required fields",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),getString(R.string.salasana_tyhjä_toast),Toast.LENGTH_SHORT).show();
                 }
 
                 if(password.length()<6){
-                    Toast.makeText(getApplicationContext(),"Password must be at least 6 characters",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),getString(R.string.salasana_vahintaan_6merkkia),Toast.LENGTH_SHORT).show();
                 }
 
                 firebaseAuth.signInWithEmailAndPassword(email, password)
@@ -98,7 +107,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                                     finish();
                                 }
                                 else{
-                                    Toast.makeText(getApplicationContext(),"E-mail or password is wrong",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(),getString(R.string.salasana_tai_email_vaarin),Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
