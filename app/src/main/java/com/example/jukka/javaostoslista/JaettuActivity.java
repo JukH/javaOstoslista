@@ -465,7 +465,7 @@ public class JaettuActivity extends AppCompatActivity {
     //Tuotteen poisto-metodi
     public void removeElement(final String selectedItem, final int position){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.poista) + selectedItem + "?");
+        builder.setTitle(getString(R.string.poista) + " " + selectedItem + "?");
         builder.setPositiveButton(getString(R.string.poista_), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
