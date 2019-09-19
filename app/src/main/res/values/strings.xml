@@ -60,6 +60,7 @@
     <string name="salasana_hint">Salasana...</string>
     <string name="kirjaudu">Kirjaudu</string>
     <string name="salasana_unohtui">Unohditko salasanan?</string>
+    <string name="resepteista">poistettu resepteistä</string>
 
     <!-- Strings related to login -->
     <string name="defaultti_web_client_id">32300194624-d3fifudd0hgdjv4puabeus2pci8floc3.apps.googleusercontent.com</string>

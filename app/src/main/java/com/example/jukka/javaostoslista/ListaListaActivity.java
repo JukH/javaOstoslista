@@ -314,6 +314,7 @@ public class ListaListaActivity extends AppCompatActivity {
                         uusiLista = uusiLista.substring(0, 1).toUpperCase() + uusiLista.substring(1).toLowerCase(); //Asetetaan annettu String alkavaksi isolla alkukirjaimella (Listan siisteys)
 
                         ListatRef.child(uusiLista).setValue(uusiLista); //Sijoitetaan annettu input tietokantaan polkuun: /ostos/input
+                        ListatRef.child(uusiLista + "/omistaja").setValue(kayttaja_id); //Lisätään dataa listaa luodessa, sillä firebase poistaa listan mikäli se on tyhjä -> jos poistaa viimeisen tuotteen -> lista poistuu.
                     }
 
                 }
