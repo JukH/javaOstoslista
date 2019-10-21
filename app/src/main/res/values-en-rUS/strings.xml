@@ -70,4 +70,6 @@
     <string name="salasana_hint">Password...</string>
     <string name="kirjaudu">Login</string>
     <string name="salasana_unohtui">Forgot password?</string>
+    <string name="action_poistu_jaosta">Leave list</string>
+    <string name="resepteista">removed from recipes</string>
 </resources>

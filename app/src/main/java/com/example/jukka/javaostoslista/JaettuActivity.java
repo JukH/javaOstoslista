@@ -153,101 +153,6 @@ public class JaettuActivity extends AppCompatActivity {
             }
         });
 
-
-
-
-/*
-            //Tarkastetaan onko käyttäjä jakaja vai kaveri:
-            jaettukoRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                    if(dataSnapshot.hasChild("jakaja")){
-                        jakajanEmail = dataSnapshot.child("jakaja").child(jakajan_email).getKey(); //MIKSINULL
-                        //Haetaan jakajan ja kaverin ID:t
-                        kayttajanIdHakuRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            String jakajanId = dataSnapshot.child(jakajanEmail).getValue(String.class);
-                                //Haetaan jakajan nimi joka näytetään muille paitsi itse jakajalle:
-                                jakajanNimiRef = database.getReference("Users/" + jakajanId + "/nimi");
-                                jakajanNimiRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        String jakajanNimi = dataSnapshot.getValue(String.class);
-                                        JaettuActivity.this.setTitle(listaTitteli + jäsenet.toString());
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
-
-
-
-                    } else {
-
-                        kayttajanIdHakuRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                if(kaverinEmail == null) {
-                                    kaverinId = dataSnapshot.child(jako_sposti).getValue(String.class);
-                                } else {
-                                    kaverinId = dataSnapshot.child(kaverinEmail).getValue(String.class);
-                                }
-                                //Haetaan kaverin nimi joka lisättiin listalle:
-                                kaverinNimiRef = database.getReference("Users/" + kaverinId + "/nimi");
-                                kaverinNimiRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        String kaverinNimi = dataSnapshot.getValue(String.class);
-
-
-                                        JaettuActivity.this.setTitle(listaTitteli + jäsenet.toString());
-
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
-
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-
-
-*/
-
-
-//////////////////////////////////////////////////////////////////////
-
-      /* if(kayttaja_email == jakajan_email.replace(",", ".")){
-            JaettuActivity.this.setTitle(listaTitteli + " (Luonut: Sinä)");
-        } else {
-            JaettuActivity.this.setTitle(listaTitteli + " (Luonut: " + jakajan_email.replace(",", ".") + ")");
-        } */
         ////////////////////////////////////////////////////////////////////////
         jakoRef.addChildEventListener(new ChildEventListener() {
             @Override
@@ -289,22 +194,6 @@ public class JaettuActivity extends AppCompatActivity {
 
             }
         });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 
 
@@ -437,19 +326,6 @@ public class JaettuActivity extends AppCompatActivity {
                         }
                     });
 
-
-                    /////////////////////////////////////
-
-
-
-
-
-                    /*
-                    Intent mene = new Intent(MainActivity.this, JaettuActivity.class ); //...luodaan intent jolla voidaan avata toinen luokka (reseptilista) jotta saadaan listalle reseptiobjektit
-                    mene.putExtra("key", jako_sposti2);
-                    mene.putExtra("key2", )
-                    startActivity(mene); //Suoritetaan intent -> avataan reseptiLista-luokka
-                    */
 
 
 
@@ -589,7 +465,7 @@ public class JaettuActivity extends AppCompatActivity {
     //Tuotteen poisto-metodi
     public void removeElement(final String selectedItem, final int position){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.poista) + selectedItem + "?");
+        builder.setTitle(getString(R.string.poista) + " " + selectedItem + "?");
         builder.setPositiveButton(getString(R.string.poista_), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

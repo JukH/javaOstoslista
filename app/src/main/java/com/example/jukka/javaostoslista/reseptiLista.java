@@ -41,7 +41,7 @@ public class reseptiLista extends AppCompatActivity {
     ArrayAdapter<String> adapter = null;
     ListView lv = null;
 
-    //String kayttaja_id = FirebaseAuth.getInstance().getCurrentUser().getUid(); //User-id talteen
+
     String kayttaja_email = FirebaseAuth.getInstance().getCurrentUser().getEmail().replace(".", ",");
     String listaTitteli;
 
@@ -217,12 +217,14 @@ public class reseptiLista extends AppCompatActivity {
     }
 
 
-    public void removeElement(final String selectedItem, final int position){ //Nimestä huolimatta tämä metodi hoitaa ostoksien lisäämisen resepti-listalta ostoslistalle
+    public void removeElement(final String selectedItem, final int position){ //Poistaa reseptin
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(selectedItem);
         builder.setPositiveButton(getString(R.string.poista_), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
+
 
 
                 String listaTeksti =(lv.getItemAtPosition(position).toString());
@@ -234,7 +236,7 @@ public class reseptiLista extends AppCompatActivity {
                 Collections.sort(reseptit);
 
                 lv.setAdapter(adapter);
-
+                Toast.makeText(reseptiLista.this, selectedItem + " " + getString(R.string.resepteista), Toast.LENGTH_LONG).show();
 
 
 
